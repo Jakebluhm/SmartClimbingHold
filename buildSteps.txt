@@ -1,0 +1,6 @@
+cd directory
+open avd through android studio
+npx react-native start
+open new termail
+
+npx react-native run-android
