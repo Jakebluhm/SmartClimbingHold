@@ -5,7 +5,8 @@
  * @format
  * @flow strict-local
  */
-import React from 'react';
+import React  from 'react';
+import { Component} from 'react';
 import type {Node} from 'react'; 
 import {
   SafeAreaView,
@@ -23,24 +24,41 @@ import {
   Header,
   LearnMoreLinks,
   ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-import { TestScreen } from './Screens/TestScreen';
-import { SecondScreen } from './Screens/SecondScreen';
-import {Router, Scene} from 'react-native-router-flux'
+} from 'react-native/Libraries/NewAppScreen';   
+
+import SecondScreenContainer from './Screens/SecondScreen'
+import { Provider } from 'react-redux'
+
+import createStore from './Redux'
+import Root from './Root';
+
+//const store = createStore()
+
+// const App: () => Node = () => {
+//   const isDarkMode = useColorScheme() === 'dark';
+
+//   const backgroundStyle = {
+//     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+//   }; 
+//   return ( 
+//     <Provider store={store}>
+//       <App >
+//         Sec
+//       </App>
+//     </Provider>
+//   )
+// };
  
+//export default App; 
 
-const App: () => Node = () => {
-  const isDarkMode = useColorScheme() === 'dark';
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
+
+const App: () => Node = () =>  {
   return ( 
-    <SecondScreen name="clicks "></SecondScreen>
-    
-  )
-};
- 
-
-export default App;
- 
+      <SecondScreenContainer>
+        
+      </SecondScreenContainer> 
+      
+  );
+}
+export default App; 

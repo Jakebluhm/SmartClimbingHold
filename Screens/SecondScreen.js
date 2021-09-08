@@ -1,5 +1,8 @@
 
 import React from 'react';
+import PropTypes from 'prop-types'
+import Actions from '../ReduxActions'
+import { connect } from 'react-redux'
 import {
     Button,
     SafeAreaView,
@@ -10,17 +13,29 @@ import {
     useColorScheme,
     View,
   } from 'react-native';
-export class SecondScreen extends React.Component {
-    addedText;
-    onButtonPress() { 
-         console.log("Button pressed")
+export  class SecondScreen extends React.Component { 
+
+    static propTypes = {
+        climbTime: PropTypes.number,
+        name: PropTypes.string.isRequired,
+        simpleRead: PropTypes.func.isRequired,
     }
 
-    render(){
-        return( 
+ 
+    onButtonPress(){ 
+         //this.numClicks += 1
+         console.log("Button pressed") ;
+         this.props.simpleRead();
+    }
+
+    render()
+    {
+        console.log(this.props) ;
+        const { name, climbTime } = this.props
+        return ( 
             <View style={styles.container}>
                 <Text style={styles.welcome}> 
-                    Hello {this.props.name} {this.addedText}
+                    {name}:{climbTime}  
                 </Text>
                 <Button color="#618455" title="Start Climb" onPress={this.onButtonPress} /> 
             </View>
@@ -33,16 +48,12 @@ export class SecondScreen extends React.Component {
 
 
 
-    constructor() {
+    constructor(props) {
         super()
-        this.addedText = 0;
+        this.onButtonPress = this.onButtonPress.bind(this)
     }
     
 }
-
-
-
-
 const styles = StyleSheet.create({
     container:{
         flex: 1,
@@ -56,6 +67,22 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     }
 })
+
+
+const mapStateToProps = state => ({
+    climbTime: state.climbTime,
+    name: state.name 
+  })
+  
+  const mapDispatchToProps = {
+    simpleRead: Actions.simpleRead
+  }
+  
+  export default connect(mapStateToProps, mapDispatchToProps)(SecondScreen)
+
+
+
+
 
 
 
