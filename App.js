@@ -4,8 +4,8 @@
  *
  * @format
  * @flow strict-local
- */
-import React  from 'react';
+ */ 
+import React, { useState, useEffect } from 'react';
 import { Component} from 'react';
 import type {Node} from 'react'; 
 import {
@@ -17,6 +17,8 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
+
+import {Actions} from './ReduxActions'
 
 import {
   Colors,
@@ -31,6 +33,9 @@ import { Provider } from 'react-redux'
 
 import createStore from './Redux'
 import Root from './Root';
+
+
+import auth from '@react-native-firebase/auth';
 
 //const store = createStore()
 
@@ -54,8 +59,53 @@ import Root from './Root';
 
 
 const App: () => Node = () =>  {
+  // Set an initializing state whilst Firebase connects
+  const [initializing, setInitializing] = useState(true);
+  const [user, setUser] = useState();
+
+  // Handle user state changes
+  function onAuthStateChanged(user) {
+    setUser(user);
+    if (initializing) setInitializing(false);
+  }
+
+  useEffect(() => {
+    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    return subscriber; // unsubscribe on unmount
+  }, []);
+
+  if (initializing) return null;
+
+  if (!user) {
+
+    auth()
+    .createUserWithEmailAndPassword('bluhmj96@gmail.com', 'jake31')
+    .then(() => {
+      console.log('User account created & signed in!');
+    })
+    .catch(error => {
+      if (error.code === 'auth/email-already-in-use') {
+        console.log('That email address is already in use!');
+      }
+  
+      if (error.code === 'auth/invalid-email') {
+        console.log('That email address is invalid!');
+      }
+  
+      console.error(error);
+    });
+
+
+    return (
+      <View>
+        <Text>Login</Text>
+      </View>
+    );
+  }
+
+
   return ( 
-      <SecondScreenContainer>
+      <SecondScreenContainer climbTime={0}  name={'jake'} simpleRead={Actions.simpleRead} >
         
       </SecondScreenContainer> 
       

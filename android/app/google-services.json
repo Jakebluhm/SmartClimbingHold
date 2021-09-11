@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "92548175051",
+    "firebase_url": "https://smart-hold-default-rtdb.firebaseio.com",
+    "project_id": "smart-hold",
+    "storage_bucket": "smart-hold.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:92548175051:android:1085d80a98fc2ed148f74e",
+        "android_client_info": {
+          "package_name": "com.smartclimbinghold"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "92548175051-0h8pfmslbp8qhnt6srtd6iqbg5lot00i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.smartclimbinghold",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "92548175051-6v5dc7ke9if58ps1kki9ku3ssi9seq30.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAJ3A1q2IaMsw9l6B5SjvDnwJzAFfwSp_U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "92548175051-6v5dc7ke9if58ps1kki9ku3ssi9seq30.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
