@@ -1,6 +1,7 @@
 
-import { combineReducers, configureStore, createStore } from 'redux' 
-
+import { combineReducers,  createStore } from 'redux' 
+import rootSaga from '../Sagas/'
+import configureStore from './CreateStore'
 export default () => {
   /* ------------- Assemble The Reducers ------------- */
   console.log("Creating store")
@@ -9,5 +10,5 @@ export default () => {
  
   })
 
-  return createStore(rootReducer)
+  return configureStore(rootReducer, rootSaga)
 } 
