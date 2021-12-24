@@ -16,7 +16,7 @@ export const routeID = state => state.zones.routeId
 
 // can add params
 export function* beginClimb() {
-    console.log("-------------------Inside *  beginClimb -------------------")
+    //console.log("-------------------Inside *  beginClimb -------------------")
  
     const currentRouteID = yield select(routeID) 
     var reference = database().ref('/' + currentRouteID);
@@ -25,7 +25,7 @@ export function* beginClimb() {
          return new Promise(function(resolve, reject){
              reference.once('value', function(snap){
                 let json =  snap.val()
-                console.log(json["SuccessfulClimbs"])
+                //console.log(json["SuccessfulClimbs"])
                 climbst = json["SuccessfulClimbs"];
                 resolve(climbst)
              })
@@ -34,12 +34,12 @@ export function* beginClimb() {
  
 
      let unixTime = Math.floor( Date.now() / 1000 )
-     console.log(unixTime) ;
+     //console.log(unixTime) ;
  
 
     const newName = yield select(currentName) 
     const newFailedClimbsValue = yield select(failedClimbs) 
-    console.log(newName)
+    //console.log(newName)
      database().ref('/' + currentRouteID).update({
          ClimbStartTime: unixTime,
          CurrentClimber:  newName,
@@ -48,14 +48,14 @@ export function* beginClimb() {
      .then(() => console.log('Data set.'));
  
 
-     console.log('---------------------calling  Actions.beginClimb---------------------')
+     //console.log('---------------------calling  Actions.beginClimb---------------------')
 
     yield put(Actions.beginClimb(newName, climbst))
   }
 
 
 export function* sendGymSettingsToFirebase(){
-    console.log("-------------------Inside *  sendGymSettingsToFirebase -------------------")
+    //console.log("-------------------Inside *  sendGymSettingsToFirebase -------------------")
 
     // Send data to firebase
     const currentclimbingGymName = yield select(climbingGymName) 
@@ -66,8 +66,8 @@ export function* sendGymSettingsToFirebase(){
     .then(() => console.log('Data set.'));
 
 
-    console.log("Saving currentRouteID")
-    console.log(currentRouteID)
+    //console.log("Saving currentRouteID")
+    //console.log(currentRouteID)
     //Save QR code that is used as root in database for this climbing gym   
     storeData(currentRouteID)
 }
@@ -84,7 +84,7 @@ const storeData = async (value) => {
 
 
 export function* initFirebaseVariables() {
-    console.log("-------------------Inside *  initFirebaseVariables -------------------")
+    //console.log("-------------------Inside *  initFirebaseVariables -------------------")
  
  const currentRouteID = yield select(routeID) 
     var reference = database().ref('/' + currentRouteID);
@@ -93,12 +93,10 @@ export function* initFirebaseVariables() {
          return new Promise(function(resolve, reject){
              reference.once('value', function(snap){
                 let json =  snap.val()
-                console.log('------failed climbs: ')
-                console.log(json["FailedClimbs"])
+          
                 failedClimbsData = json["FailedClimbs"];
                  
-                console.log('------ClimbingGymName climbs: ')
-                console.log(json["ClimbingGymName"])
+                
                 ClimbingGymName = json["ClimbingGymName"]; 
 
                 resolve(failedClimbsData)

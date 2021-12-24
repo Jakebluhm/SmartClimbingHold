@@ -1,7 +1,8 @@
 
 import {createReducer, createActions} from 'reduxsauce'
 import  Immutable  from 'seamless-immutable';
-
+import mapValues from 'lodash/mapValues'
+import { LeaderboardFilters } from './Lib/LeaderboardFilters';
 
 const {Types, Creators} = createActions({
     beginClimb: ['name', 'climbTime'],
@@ -17,7 +18,9 @@ const {Types, Creators} = createActions({
     setIsLoading: ['loading'],
     routeIdSaved: ['saved'],
     setAuthenticationIsLoading: ['loading'],
-    setUserAuthenticated: ['auth']
+    setUserAuthenticated: ['auth'],
+    changeAllClimbData: ['data'],
+    changeLeaderboardFilter: ['filter'],
 
 
 })
@@ -34,6 +37,8 @@ export const INITIAL_STATE = new Immutable({
     activeClimber: false,
     climbingGymName: "",
     routeId: "",
+    leaderboardFilter: 0,
+    allClimbData: null,
     isLoading: true,
     routeIdSet: false,
     authenticationIsLoading: true,
@@ -54,7 +59,7 @@ export const INITIAL_STATE = new Immutable({
 //         climbTime: 0
 //     })
     const refreshData = (state, action) => {
-         console.log("-------------------Inside  refreshData -------------------")
+         //console.log("-------------------Inside  refreshData -------------------")
         
         //  var Names = state.recentClimbers
         //  Names.push({name: action.name})
@@ -72,10 +77,10 @@ export const INITIAL_STATE = new Immutable({
         )
 
         
-        console.log("names")
-        console.log(names)
-        console.log("names.length")
-        console.log(names.length)
+        //console.log("names")
+        //console.log(names)
+        //console.log("names.length")
+        //console.log(names.length)
         return  state.merge({
             recentClimbers: names,
             name: action.name,
@@ -86,75 +91,90 @@ export const INITIAL_STATE = new Immutable({
       }
  
       const nameChanged = (state, action) => {
-        console.log("-------------------Inside  nameChanged -------------------")
+        //console.log("-------------------Inside  nameChanged -------------------")
  
-        console.log(action.name)
+        //console.log(action.name)
         return  state.merge({ name: action.name }) 
      }
 
      
-     const setIsLoading = (state, action) => {
-        console.log("-------------------Inside  setIsLoading -------------------")
+     const changeLeaderboardFilter = (state, action) => {
+        console.log("-------------------Inside  changeLeaderboardFilter -------------------")
  
-        console.log(action.loading)
+        console.log(action.filter)
+        return  state.merge({ leaderboardFilter: action.filter }) 
+     }
+     
+     const setIsLoading = (state, action) => {
+        //console.log("-------------------Inside  setIsLoading -------------------")
+ 
+        //console.log(action.loading)
         return  state.merge({ isLoading: action.loading }) 
      }
 
+     const changeAllClimbData = (state, action) => {
+        //console.log("-------------------Inside  changeAllClimbData -------------------")
+ 
+
+        //console.log(action.data) 
+        return  state.merge({ allClimbData: action.data }) 
+
+     }
      
      const setAuthenticationIsLoading = (state, action) => {
-        console.log("-------------------Inside  setAuthenticationIsLoading -------------------")
+        //console.log("-------------------Inside  setAuthenticationIsLoading -------------------")
  
-        console.log('action.loading')
-        console.log(action.loading)
+        //console.log('action.loading')
+        //console.log(action.loading)
         return  state.merge({ authenticationIsLoading: action.loading }) 
      }
 
      
      const setUserAuthenticated = (state, action) => {
-        console.log("-------------------Inside  setUserAuthenticated -------------------")
+        //console.log("-------------------Inside  setUserAuthenticated -------------------")
  
-        console.log(action.auth)
+        //console.log(action.auth)
         return  state.merge({ userAuthenticated: action.auth }) 
      }
      
      const routeIdSaved = (state, action) => {
-        console.log("-------------------Inside  routeIdSaved -------------------")
+        //console.log("-------------------Inside  routeIdSaved -------------------")
  
-        console.log(action.saved)
+        //console.log(action.saved)
         return  state.merge({ routeIdSet: action.saved }) 
      }
      
      const onClimbingGymNameChange = (state, action) => {
-        console.log("-------------------Inside  onClimbingGymNameChange -------------------")
+        //console.log("-------------------Inside  onClimbingGymNameChange -------------------")
  
-        console.log(action.name)
+        //console.log(action.name)
         return  state.merge({ climbingGymName: action.name }) 
      }
 
      const leaderboardChange = (state, action) => {
-        console.log("-------------------Inside  leaderboardChange -------------------")
-        console.log(action.leaderboard)
+        //console.log("-------------------Inside  leaderboardChange -------------------")
+        //console.log(action.leaderboard)
         return  state.merge({ leaderboard: action.leaderboard })
       
      }
 
      
      const onRouteIdChange = (state, action) => {
-        console.log("-------------------Inside  onRouteIdChange -------------------")
-        console.log(action.id)
+        //console.log("-------------------Inside  onRouteIdChange -------------------")
+        //console.log(action.id)
         return  state.merge({ routeId: action.id })
       
      }
 
      const updateSuccessfulClimbs = (state, action) => {
-        console.log("-------------------Inside  updateSuccessfulClimbs -------------------")
-        console.log(action.climbs)
+        //console.log("-------------------Inside  updateSuccessfulClimbs -------------------")
+        //console.log(action.climbs)
         return  state.merge({ successfulClimbs: action.climbs, activeClimber: false }) 
      }
 
      const updateFailedClimbs = (state, action) => {
-        console.log("-------------------Inside  updateFailedClimbs -------------------")
-        console.log(action.failedClimbs)
+        //console.log("-------------------Inside  updateFailedClimbs -------------------")
+        //console.log(action.failedClimbs)
         return  state.merge({ failedClimbs: action.failedClimbs })
       
      }
@@ -172,6 +192,8 @@ export const reducer = createReducer(INITIAL_STATE, {
     [Types.ROUTE_ID_SAVED]: routeIdSaved,
     [Types.SET_AUTHENTICATION_IS_LOADING]: setAuthenticationIsLoading,
     [Types.SET_USER_AUTHENTICATED]: setUserAuthenticated,
+    [Types.CHANGE_ALL_CLIMB_DATA]:changeAllClimbData,
+    [Types.CHANGE_LEADERBOARD_FILTER]:changeLeaderboardFilter,
     
 })
 

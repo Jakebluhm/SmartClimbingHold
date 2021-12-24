@@ -42,24 +42,24 @@ export  class InitialScreen extends React.Component
     }
 
     async getData(){
-        console.log('-----------------------------getData() in InitialScreen-------------')
+        //console.log('-----------------------------getData() in InitialScreen-------------')
         try {
           const value = await AsyncStorage.getItem('@RouteID')
           if(value !== null) {
             // value previously stored
-            console.log(' RouteID ') 
-            console.log(value)
+            //console.log(' RouteID ') 
+            //console.log(value)
             this.props.onRouteIdChange(value) 
             this.props.setIsLoading(false) 
             this.props.routeIdSaved(true);
           }
           else{
-            console.log('No RouteID saved') 
+            //console.log('No RouteID saved') 
             this.props.setIsLoading(false)
           }
         } catch(e) {
-            console.log(' error in getData  InitialScreen') 
-            console.log(e)
+            //console.log(' error in getData  InitialScreen') 
+            //console.log(e)
         }
     }
 
@@ -77,16 +77,16 @@ export  class InitialScreen extends React.Component
 
     render()
     { 
-        console.log('----------------------- initialScreenjs render()------------------------')
+        //console.log('----------------------- initialScreenjs render()------------------------')
         const { isLoading, routeId, routeIdSet, authenticationIsLoading, userAuthenticated } = this.props
-        console.log('---routeId.length')
-        console.log(routeId.length)
-        console.log('---isLoading')
-        console.log(isLoading)
-        console.log('---routeIdSet')
-        console.log(routeIdSet)
-        console.log('---userAuthenticated')
-        console.log(userAuthenticated)
+        //console.log('---routeId.length')
+        //console.log(routeId.length)
+        //console.log('---isLoading')
+        //console.log(isLoading)
+        //console.log('---routeIdSet')
+        //console.log(routeIdSet)
+        //console.log('---userAuthenticated')
+        //console.log(userAuthenticated)
         return (  
             <View style={[s.emptyContainer, { flexDirection: "column" }]}>
                 { !userAuthenticated  ? 

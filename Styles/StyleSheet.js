@@ -19,10 +19,16 @@ module.exports = StyleSheet.create({
     },     
     horizontalContainer:{ 
         flex: 1, 
-        padding: 10,
+        padding: 0,
         flexDirection: 'row', 
         alignItems:'center',
         alignItems:'flex-start'
+    }, 
+    horizontalContainerCentered:{ 
+        flex: 1, 
+        padding: 0,
+        flexDirection: 'row', 
+        alignItems:'center', 
     }, 
     verticalContainer:{
         flex: 5, 
@@ -33,7 +39,11 @@ module.exports = StyleSheet.create({
         flex: 1,
         margin:10,  
     },
-
+    image:{
+        resizeMode: "contain",
+        height: 68/2,
+        width: 184/2,
+    },
     InfoContainer:{
         flex: 1, 
         padding: 20, 
@@ -76,9 +86,14 @@ module.exports = StyleSheet.create({
     welcome:{   
         fontSize: 24,
         textAlign: 'left',   
+        flex:5,
         margin: 5, 
     },
-
+    GymSettingsText:{   
+        fontSize: 24,
+        textAlign: 'left',   
+        margin: 5, 
+    },
     infoGraphic:{   
         fontSize: 24,
         textAlign: 'center',   

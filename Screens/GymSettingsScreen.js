@@ -40,11 +40,7 @@ export  class GymSettingsScreen extends React.Component
         
     }
 
-
-    async componentDidMount(){
-        
-    }
-
+ 
     constructor() 
     {
         super() 
@@ -57,7 +53,7 @@ export  class GymSettingsScreen extends React.Component
         
         return (  
         <View style={[s.container, { flexDirection: "column" }]}>
-            <Text style={s.welcome}>
+            <Text style={s.GymSettingsText}>
                 <Icon name="domain" style={{flex:1, paddingBottom:1}} size={25} color="#000" />Climbing Gym Name
             </Text> 
             <TextInput
@@ -71,7 +67,7 @@ export  class GymSettingsScreen extends React.Component
                 keyboardType="default"
             /> 
 
-            <Text style={s.welcome}>
+            <Text style={s.GymSettingsText}>
                 <Icon name="qr-code" style={{flex:1, paddingBottom:1}} size={25} color="#000" />Route ID
             </Text> 
             <TextInput

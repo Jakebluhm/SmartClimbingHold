@@ -103,7 +103,7 @@ const App: () => Node = () =>  {
 
   //AsyncStorage.clear().then // For debug use only
 
-  // console.log('-----------------------------getData() in App-------------')
+  // //console.log('-----------------------------getData() in App-------------')
   // var QRSaved = false
   // try 
   // {
@@ -111,12 +111,12 @@ const App: () => Node = () =>  {
   //   if(value !== null)  
   //   {
   //     // value previously stored
-  //     console.log('value exists')
+  //     //console.log('value exists')
   //     QRSaved = true
   //   }
   //   else
   //   {
-  //       console.log('No RouteID saved')
+  //       //console.log('No RouteID saved')
   //   }
   // } 
   // catch(e) 
@@ -131,15 +131,15 @@ const App: () => Node = () =>  {
   //   auth()
   //   .signInWithEmailAndPassword('bluhmj96@gmail.com', 'jake31')//createUserWithEmailAndPassword
   //   .then(() => {
-  //     console.log('User account created & signed in!');
+  //     //console.log('User account created & signed in!');
   //   })
   //   .catch(error => {
   //     if (error.code === 'auth/email-already-in-use') {
-  //       console.log('That email address is already in use!');
+  //       //console.log('That email address is already in use!');
   //     }
   
   //     if (error.code === 'auth/invalid-email') {
-  //       console.log('That email address is invalid!');
+  //       //console.log('That email address is invalid!');
   //     }
   
   //     console.error(error);

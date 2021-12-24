@@ -31,14 +31,14 @@ import {
 
 
   export async function onSigOut() {
-    console.log('--------onSigOut() in AuthenticationScreen.js---------')
+    //console.log('--------onSigOut() in AuthenticationScreen.js---------')
     auth().signOut(auth).then(() => {
         // Sign-out successful.
-        console.log('--------onSigOut() in AuthenticationScreen.js----   SUCCESSFUL-----')
+        //console.log('--------onSigOut() in AuthenticationScreen.js----   SUCCESSFUL-----')
         this.props.setUserAuthenticated(false)
       }).catch((error) => {
-          console.log('--------onSigOut() in AuthenticationScreen.js----   ERROR!!-----')
-          console.log(error)
+          //console.log('--------onSigOut() in AuthenticationScreen.js----   ERROR!!-----')
+          //console.log(error)
       }); 
   }
 
@@ -58,18 +58,18 @@ import {
 
   // Handle user state changes
   onAuthStateChanged(user) {
-    console.log('--------------onAuthStateChanged---------')
-    console.log('user')
-    console.log(user)
+    //console.log('--------------onAuthStateChanged---------')
+    //console.log('user')
+    //console.log(user)
     if(user){
-        console.log('USER SIGNED IN')
+        //console.log('USER SIGNED IN')
 
         this.props.setUserAuthenticated(true);
         this.props.setAuthenticationIsLoading(false);
         
     }
     else{
-        console.log('NO USER SIGNED IN') 
+        //console.log('NO USER SIGNED IN') 
 
         this.props.setUserAuthenticated(false);
         this.props.setAuthenticationIsLoading(false);
@@ -86,10 +86,10 @@ import {
 
     //     auth().onAuthStateChanged((user) => {
     //         if (user) {
-    //           console.log('user is logged');
+    //           //console.log('user is logged');
     //         }
     //         else{
-    //             console.log('Auto Sign in failed');
+    //             //console.log('Auto Sign in failed');
     //         }
     //   });
 
@@ -98,10 +98,10 @@ import {
 
     render()
     {
-        console.log('----------------------- AuthenticationScreen.js render()------------------------')
+        //console.log('----------------------- AuthenticationScreen.js render()------------------------')
         const { authenticationIsLoading } = this.props
-        console.log('authenticationIsLoading')
-        console.log(authenticationIsLoading)
+        //console.log('authenticationIsLoading')
+        //console.log(authenticationIsLoading)
 
         return ( 
             <View style={[s.emptyContainer, { flexDirection: "column" }]}> 

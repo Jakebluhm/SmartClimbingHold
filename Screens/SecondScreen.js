@@ -5,6 +5,7 @@ import Actions from '../ReduxActions'
 import { connect } from 'react-redux'
 import LinearGradient from 'react-native-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Immutable from 'seamless-immutable'
 import {
     Button,
     SafeAreaView,
@@ -13,6 +14,7 @@ import {
     StyleSheet,
     Text,
     useColorScheme,
+    Image,
     View,
     TextInput,
     TouchableOpacity
@@ -24,6 +26,7 @@ import {
 import RecentNameContainer from '../Containers/RecentNameContainer';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import SeamlessImmutable from 'seamless-immutable';
 
 const s = require('../Styles/StyleSheet'); 
 export const routeID = state => state.zones.routeId
@@ -52,20 +55,21 @@ export  class SecondScreen extends React.Component {
         onNameChange: PropTypes.func.isRequired,
         updateLeaderBoard: PropTypes.func.isRequired,
         onRouteIdChange: PropTypes.func.isRequired,
+        changeAllClimbData:  PropTypes.func.isRequired,
     }
 
     async getData(){
-      console.log('-----------------------------getData() in SecondScreen-------------')
+      //console.log('-----------------------------getData() in SecondScreen-------------')
     try {
       const value = await AsyncStorage.getItem('@RouteID')
       if(value !== null) {
         // value previously stored
-          console.log(' RouteID ') 
-          console.log(value)
+          //console.log(' RouteID ') 
+          //console.log(value)
         this.props.onRouteIdChange(value) 
       }
       else{
-          console.log('No RouteID saved')
+          //console.log('No RouteID saved')
       }
     } catch(e) {
       // error reading value
@@ -73,9 +77,9 @@ export  class SecondScreen extends React.Component {
   }
  
     onButtonPress(){   
-        console.log("Start Climb pressed") ;
-        //console.log("this.props") ;
-        //console.log(this.props) ;
+        //console.log("Start Climb pressed") ;
+        ////console.log("this.props") ;
+        ////console.log(this.props) ;
         this.props.beginClimbRequest();
         this.props.updateFailedClimbs(this.props.failedClimbs + 1) 
         
@@ -85,9 +89,9 @@ export  class SecondScreen extends React.Component {
  
     render()
     {
-        console.log("-----------------render()---------------------") ;
-        console.log("this.props") ;
-        console.log(this.props) ;
+        //console.log("-----------------render()---------------------") ;
+        //console.log("this.props") ;
+        //console.log(this.props) ;
         const {climbingGymName, name, climbTime, leaderboard, successfulClimbs, recentClimbers, failedClimbs } = this.props
         var climbPercentage = 0.0
         if(successfulClimbs + failedClimbs > 0)
@@ -103,8 +107,9 @@ export  class SecondScreen extends React.Component {
             <View style={s.containerTop}>
               <View style={s.horizontalContainer}> 
                 <Text style={s.welcome}>{climbingGymName}</Text> 
+                <Text style={s.welcome}>Route Name</Text> 
                 
-                <View style={s.verticalContainer}>
+                <View style={s.verticalContainer}> 
                   
                   <Text style={s.welcome}>
                       <Icon name="person" style={{flex:1, paddingBottom:1}} size={25} color="#000" />Climber Name
@@ -114,7 +119,7 @@ export  class SecondScreen extends React.Component {
                     onChangeText={text => {   
                       var cleanText = text.replace(/[.$#\[\]\/]/gi, '')
                       this.props.onNameChange(cleanText) 
-                       }}
+                      }}
                     value={name} 
                     placeholder="Enter Name"
                     keyboardType="default"
@@ -124,8 +129,10 @@ export  class SecondScreen extends React.Component {
               </View> 
             </View> 
             <View style={s.containerMiddle}>
+
               <View style={s.horizontalContainer}>
                 <View style={s.tableContainer}> 
+
                   <Leaderboard leaderboardData={leaderboard}/> 
                 </View>
                 <View style={s.tableContainer}>
@@ -156,9 +163,6 @@ export  class SecondScreen extends React.Component {
     constructor() {
         super()
         this.onButtonPress = this.onButtonPress.bind(this) 
-
-
-
     }
  
 
@@ -172,8 +176,7 @@ export  class SecondScreen extends React.Component {
         await this.getData();
 
         const currentRouteID = this.props.routeId//'abc123'
-         
-
+          
         // assign a reference to this component's firebaseRefClimberData member
         this.firebaseRefClimberData = database().ref(
           '/'+currentRouteID+'/ClimberData'
@@ -189,15 +192,15 @@ export  class SecondScreen extends React.Component {
         // grab the data from the server and call this.onFrebaseClimberDataChanged every time it changes
         this.firebaseRefSuccessfulClimbs.on("value", this.onFirebaseSuccessfulClimbsChanged);
 
-      console.log("-----componentDidMount------");
+      //console.log("-----componentDidMount------");
       this.props.firebaseDataRequest();
     }
 
 
       onFirebaseSuccessfulClimbsChanged = snapshot => {
  
-        console.log("-----onFirebaseSuccessfulClimbsChanged------");  
-         console.log(snapshot.val())  
+        //console.log("-----onFirebaseSuccessfulClimbsChanged------");  
+         //console.log(snapshot.val())  
  
         this.props.updateSuccessfulClimbs(snapshot.val())
          
@@ -222,7 +225,7 @@ export  class SecondScreen extends React.Component {
                 let climbs = childSnapshot.val() 
  
                 Object.values(climbs).map(climbData =>{
-                    console.log(climbData);
+                    //console.log(climbData);
                     allClimbs.push({name:childSnapshot.key, time:climbData})
                 })
         })
@@ -232,10 +235,11 @@ export  class SecondScreen extends React.Component {
         console.log("-----sorted------");
         console.log(sorted);
         const top5Climbers = sorted.slice(0,20) 
-        console.log("-----top5Climbers------");
-        console.log(top5Climbers);
+        //console.log("-----top5Climbers------");
+        //console.log(top5Climbers);
         this.props.updateLeaderBoard(top5Climbers) 
-         
+        this.props.changeAllClimbData(snapshot.val()) 
+        
       };
 
 
@@ -252,16 +256,13 @@ function compare( a, b ) {
     return 0;
   }
 
-
-
-
  
  
   function mapStateToProps(state) {
-    console.log("-----------------mapStateToProps()---------------------") ;
+    //console.log("-----------------mapStateToProps()---------------------") ;
     
-    console.log("state")
-    console.log(state)
+    //console.log("state")
+    //console.log(state)
     return {
         climbTime: state.zones.climbTime,
         name: state.zones.name,
@@ -283,6 +284,7 @@ function compare( a, b ) {
     updateSuccessfulClimbs: Actions.updateSuccessfulClimbs,  
     updateFailedClimbs: Actions.updateFailedClimbs,       
     onRouteIdChange: Actions.onRouteIdChange,
+    changeAllClimbData: Actions.changeAllClimbData,
   }
   
   export default connect(mapStateToProps, mapDispatchToProps)(SecondScreen)
