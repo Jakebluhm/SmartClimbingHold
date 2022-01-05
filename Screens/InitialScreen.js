@@ -1,14 +1,15 @@
 
 import React from 'react';
 import { connect } from 'react-redux'
-import Actions from '../ReduxActions'
+import Actions from '../Redux/ReduxActions'
 import PropTypes from 'prop-types'
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useNavigationContainerRef  } from '@react-navigation/native';
 import SecondScreenContainer from './SecondScreen'
 import GymSettingsScreenContainer from './GymSettingsScreen'
 import AuthenticationScreenContainer from './AuthenticationScreen'
 import { createDrawerNavigator } from '@react-navigation/drawer'; 
+import NavigatorContainer from '../NavigationContainer';
 
 import { 
     Text, 
@@ -33,7 +34,7 @@ export  class InitialScreen extends React.Component
         routeId: PropTypes.string.isRequired, 
         isLoading: PropTypes.bool.isRequired,
         routeIdSet: PropTypes.bool.isRequired,
-        authenticationIsLoading: PropTypes.bool.isRequired,
+        authenticationIsLoading: PropTypes.bool.isRequired, 
 
         setIsLoading: PropTypes.func.isRequired,
         onRouteIdChange: PropTypes.func.isRequired,
@@ -44,7 +45,7 @@ export  class InitialScreen extends React.Component
     async getData(){
         //console.log('-----------------------------getData() in InitialScreen-------------')
         try {
-          const value = await AsyncStorage.getItem('@RouteID')
+          const value = await AsyncStorage.getItem('@RouteID') 
           if(value !== null) {
             // value previously stored
             //console.log(' RouteID ') 
@@ -63,11 +64,12 @@ export  class InitialScreen extends React.Component
         }
     }
 
-    async componentDidMount(){
+    async componentDidMount(){ 
         await this.getData();
         
         //this.props.navigation.navigate('Home')
     } 
+
  
 
     constructor()  
@@ -75,10 +77,12 @@ export  class InitialScreen extends React.Component
         super()   
     }
 
+    
+
     render()
     { 
         //console.log('----------------------- initialScreenjs render()------------------------')
-        const { isLoading, routeId, routeIdSet, authenticationIsLoading, userAuthenticated } = this.props
+        const { isLoading, routeId, routeIdSet, authenticationIsLoading, userAuthenticated} = this.props
         //console.log('---routeId.length')
         //console.log(routeId.length)
         //console.log('---isLoading')
@@ -87,13 +91,15 @@ export  class InitialScreen extends React.Component
         //console.log(routeIdSet)
         //console.log('---userAuthenticated')
         //console.log(userAuthenticated)
+        
+        //const navigationRef = useNavigationContainerRef();
         return (  
             <View style={[s.emptyContainer, { flexDirection: "column" }]}>
                 { !userAuthenticated  ? 
                     <AuthenticationScreenContainer></AuthenticationScreenContainer>  
                 : 
                 
-                    <View style={[s.emptyContainer, { flexDirection: "column" }]}>
+                    <View style={[s.emptyContainer, { flexDirection: "column" }]}> 
                         {isLoading ?
                             <View style={[ { flexDirection: "column" }]}> 
                                     <Text style={s.welcome}>SHOW LOADING SCREEN - ROUTE ID</Text> 
@@ -101,12 +107,30 @@ export  class InitialScreen extends React.Component
                             :
                             <View style={[s.emptyContainer, { flexDirection: "column" }]}>
                                     { routeId.length >= 6 && routeIdSet ? 
-                                        <NavigationContainer>
+                                        <NavigationContainer
+                                        // ref={navigationRef} 
+                                        // onReady={() => {
+                                        //   routeNameRef.current = navigationRef.getCurrentRoute().name;
+                                        // }}
+                                        // onStateChange={async () => {
+                                        //   const previousRouteName = routeNameRef.current;
+                                        //   const currentRouteName = navigationRef.getCurrentRoute().name;
+                                  
+                                        //   if (previousRouteName !== currentRouteName) {
+                                        //     console.log('currentRouteName')
+                                        //     console.log(currentRouteName)
+                                        //   }
+                                  
+                                        //   // Save the current route name for later comparison
+                                        //   routeNameRef.current = currentRouteName;
+                                        // }}
+                                      >
                                             <Drawer.Navigator initialRouteName="Home">
                                                 <Drawer.Screen name="Home" component={SecondScreenContainer} /> 
                                                 <Drawer.Screen name="Gym Settings" component={GymSettingsScreenContainer} />  
                                             </Drawer.Navigator> 
                                         </NavigationContainer> 
+                                        //<NavigatorContainer></NavigatorContainer>
                                         :
                                         <GymSettingsScreenContainer>
 
@@ -117,7 +141,7 @@ export  class InitialScreen extends React.Component
                     </View>
                 }
             </View>
-        );
+        ); 
     } 
 
 
@@ -125,11 +149,11 @@ export  class InitialScreen extends React.Component
 
   function mapStateToProps(state) { 
     return { 
-         routeId: state.zones.routeId,
-         isLoading: state.zones.isLoading,
-         routeIdSet: state.zones.routeIdSet,
-         authenticationIsLoading: state.zones.authenticationIsLoading,
-         userAuthenticated: state.zones.userAuthenticated,
+         routeId: state.route.routeId,
+         isLoading: state.route.isLoading,
+         routeIdSet: state.route.routeIdSet,
+         authenticationIsLoading: state.route.authenticationIsLoading,
+         userAuthenticated: state.route.userAuthenticated, 
     };
   }
   

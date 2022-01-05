@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
-import Actions from '../ReduxActions'
+import Actions from '../Redux/ReduxActions'
 import {
     Button, 
     StyleSheet,
@@ -15,12 +15,13 @@ import {
   GoogleSignin.configure({
     webClientId: "92548175051-6v5dc7ke9if58ps1kki9ku3ssi9seq30.apps.googleusercontent.com",
   });
-
+ 
   const s = require('../Styles/StyleSheet');
 
   async function onGoogleButtonPress() {
     // Get the users ID token
     const { idToken } = await GoogleSignin.signIn();
+  
   
     // Create a Google credential with the token
     const googleCredential = auth.GoogleAuthProvider.credential(idToken);
@@ -28,20 +29,7 @@ import {
     // Sign-in the user with the credential
     return auth().signInWithCredential(googleCredential);
   }
-
-
-  export async function onSigOut() {
-    //console.log('--------onSigOut() in AuthenticationScreen.js---------')
-    auth().signOut(auth).then(() => {
-        // Sign-out successful.
-        //console.log('--------onSigOut() in AuthenticationScreen.js----   SUCCESSFUL-----')
-        this.props.setUserAuthenticated(false)
-      }).catch((error) => {
-          //console.log('--------onSigOut() in AuthenticationScreen.js----   ERROR!!-----')
-          //console.log(error)
-      }); 
-  }
-
+ 
 
 
 
@@ -56,11 +44,14 @@ import {
         setUserAuthenticated: PropTypes.func.isRequired,
     }
 
+
+
+
   // Handle user state changes
   onAuthStateChanged(user) {
-    //console.log('--------------onAuthStateChanged---------')
-    //console.log('user')
-    //console.log(user)
+    console.log('--------------onAuthStateChanged---------')
+    console.log('user')
+    console.log(user)
     if(user){
         //console.log('USER SIGNED IN')
 
@@ -131,9 +122,9 @@ import {
   function mapStateToProps(state) { 
  
     return {
-        //climbTime: state.zones.climbTime, 
-        authenticationIsLoading: state.zones.authenticationIsLoading,
-        userAuthenticated: state.zones.userAuthenticated,
+        //climbTime: state.route.climbTime, 
+        authenticationIsLoading: state.route.authenticationIsLoading,
+        userAuthenticated: state.route.userAuthenticated,
     };
   }
   

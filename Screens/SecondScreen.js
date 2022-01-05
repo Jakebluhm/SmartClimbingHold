@@ -1,10 +1,12 @@
 
 import React from 'react';
 import PropTypes from 'prop-types'
-import Actions from '../ReduxActions'
+import Actions from '../Redux/ReduxActions'
 import { connect } from 'react-redux'
 import LinearGradient from 'react-native-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import ClimbingGymActions from '../Redux/PasscodeRedux'
+import {PasscodeCreationStates} from '../Lib/PasscodeCreationStates'
 import Immutable from 'seamless-immutable'
 import {
     Button,
@@ -19,17 +21,15 @@ import {
     TextInput,
     TouchableOpacity
     
-  } from 'react-native';
-
-  import database from '@react-native-firebase/database';
-  import Leaderboard from '../Components/Leaderboard'
-import RecentNameContainer from '../Containers/RecentNameContainer';
-
+  } from 'react-native'; 
+import database from '@react-native-firebase/database';
+import Leaderboard from '../Components/Leaderboard'
+import RecentNameContainer from '../Containers/RecentNameContainer'; 
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import SeamlessImmutable from 'seamless-immutable';
 
 const s = require('../Styles/StyleSheet'); 
-export const routeID = state => state.zones.routeId
+export const routeID = state => state.route.routeId
 
 export  class SecondScreen extends React.Component { 
     // this will be a fixed reference you can use to attach/detach the listener
@@ -40,13 +40,14 @@ export  class SecondScreen extends React.Component {
     static propTypes = {
         leaderboard: PropTypes.array.isRequired,
         recentClimbers: PropTypes.array.isRequired,
-        climbTime: PropTypes.number.isRequired,
+        climbTime: PropTypes.number.isRequired, 
         successfulClimbs: PropTypes.number.isRequired,
         failedClimbs: PropTypes.number.isRequired,
         name: PropTypes.string.isRequired, 
         climbingGymName: PropTypes.string.isRequired, 
         activeClimber: PropTypes.bool.isRequired,
         routeId: PropTypes.string.isRequired,  
+        //passcodeState: PropTypes.number.isRequired,
 
         updateSuccessfulClimbs: PropTypes.func.isRequired,
         updateFailedClimbs: PropTypes.func.isRequired,
@@ -56,6 +57,8 @@ export  class SecondScreen extends React.Component {
         updateLeaderBoard: PropTypes.func.isRequired,
         onRouteIdChange: PropTypes.func.isRequired,
         changeAllClimbData:  PropTypes.func.isRequired,
+        tempPasscodeChanged: PropTypes.func.isRequired, 
+        setPasscodeState: PropTypes.func.isRequired,
     }
 
     async getData(){
@@ -64,7 +67,7 @@ export  class SecondScreen extends React.Component {
       const value = await AsyncStorage.getItem('@RouteID')
       if(value !== null) {
         // value previously stored
-          //console.log(' RouteID ') 
+          //console.log('RouteID') 
           //console.log(value)
         this.props.onRouteIdChange(value) 
       }
@@ -77,9 +80,8 @@ export  class SecondScreen extends React.Component {
   }
  
     onButtonPress(){   
-        //console.log("Start Climb pressed") ;
-        ////console.log("this.props") ;
-        ////console.log(this.props) ;
+        //console.log("Start Climb pressed");
+        //console.log("this.props"); 
         this.props.beginClimbRequest();
         this.props.updateFailedClimbs(this.props.failedClimbs + 1) 
         
@@ -164,15 +166,37 @@ export  class SecondScreen extends React.Component {
         super()
         this.onButtonPress = this.onButtonPress.bind(this) 
     }
+
  
 
     componentWillUnmount() {
         // detach all listeners to this reference when component unmounts (very important!)
+        console.log('component will unmount')
         this.firebaseRefClimberData.off();
+        try{
+          this._unsubscribe();
+      }
+      catch(err){
+          console.log(err)
+      }
       }
 
       async componentDidMount(){  
-
+        try{
+          this._unsubscribe = this.props.navigation.addListener('focus', () => {
+              console.log('Home Screen did foucs')
+              this.props.tempPasscodeChanged('');
+              this.props.setPasscodeState(PasscodeCreationStates.SAVED)  
+            });
+          }
+          catch(err){
+              console.log(err)
+          }
+      // this._unsubscribe = this.props.navigation.addListener('focus', () => {
+      //   console.log('Home Screen did foucs')
+      // });
+        console.log('compenentDidMount in SecondScreen..js   ')
+        
         await this.getData();
 
         const currentRouteID = this.props.routeId//'abc123'
@@ -264,15 +288,16 @@ function compare( a, b ) {
     //console.log("state")
     //console.log(state)
     return {
-        climbTime: state.zones.climbTime,
-        name: state.zones.name,
-        leaderboard: state.zones.leaderboard,
-        successfulClimbs: state.zones.successfulClimbs,
-        failedClimbs: state.zones.failedClimbs,
-        recentClimbers: state.zones.recentClimbers,
-        climbingGymName: state.zones.climbingGymName,
-        activeClimber: state.zones.activeClimber, 
-        routeId: state.zones.routeId,
+        climbTime: state.route.climbTime,
+        name: state.route.name,
+        leaderboard: state.route.leaderboard,
+        successfulClimbs: state.route.successfulClimbs,
+        failedClimbs: state.route.failedClimbs,
+        recentClimbers: state.route.recentClimbers,
+        climbingGymName: state.route.climbingGymName,
+        activeClimber: state.route.activeClimber, 
+        routeId: state.route.routeId,
+        //passcodeState: state.climbingGym.passcodeState
     };
   }
   
@@ -283,8 +308,10 @@ function compare( a, b ) {
     updateLeaderBoard: Actions.updateLeaderBoard,     
     updateSuccessfulClimbs: Actions.updateSuccessfulClimbs,  
     updateFailedClimbs: Actions.updateFailedClimbs,       
+    tempPasscodeChanged:  ClimbingGymActions.tempPasscodeChanged,
     onRouteIdChange: Actions.onRouteIdChange,
     changeAllClimbData: Actions.changeAllClimbData,
+    setPasscodeState: ClimbingGymActions.setPasscodeState
   }
   
   export default connect(mapStateToProps, mapDispatchToProps)(SecondScreen)

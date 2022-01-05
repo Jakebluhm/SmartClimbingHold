@@ -2,7 +2,7 @@
 import {createReducer, createActions} from 'reduxsauce'
 import  Immutable  from 'seamless-immutable';
 import mapValues from 'lodash/mapValues'
-import { LeaderboardFilters } from './Lib/LeaderboardFilters';
+import { LeaderboardFilters } from '../Lib/LeaderboardFilters';
 
 const {Types, Creators} = createActions({
     beginClimb: ['name', 'climbTime'],
@@ -21,6 +21,7 @@ const {Types, Creators} = createActions({
     setUserAuthenticated: ['auth'],
     changeAllClimbData: ['data'],
     changeLeaderboardFilter: ['filter'],
+ 
 
 
 })
@@ -34,11 +35,11 @@ export const INITIAL_STATE = new Immutable({
     recentClimbers:[],
     successfulClimbs: 0,
     failedClimbs: 0,
-    activeClimber: false,
+    activeClimber: false, 
     climbingGymName: "",
-    routeId: "",
+    routeId: "", 
     leaderboardFilter: 0,
-    allClimbData: null,
+    allClimbData: {},
     isLoading: true,
     routeIdSet: false,
     authenticationIsLoading: true,
@@ -60,31 +61,21 @@ export const INITIAL_STATE = new Immutable({
 //     })
     const refreshData = (state, action) => {
          //console.log("-------------------Inside  refreshData -------------------")
-        
-        //  var Names = state.recentClimbers
-        //  Names.push({name: action.name})
-        //  if(Names.length > 20){
-        //     Names.pop()
-        //  }
+ 
         var names = (state.recentClimbers.length > 19)?  [{key: state.recentClimbers.length,  name: action.name}, ...state.recentClimbers.filter( (_,i) =>  i !== state.recentClimbers.length-1
         )] : [{key: state.recentClimbers.length,  name: action.name}, ...state.recentClimbers]
       
         
         names = names.filter((thing, index, self) =>
-        index === self.findIndex((t) => (
+        index === self.findIndex((t) => ( 
             t.name === thing.name  
         ))
         )
 
-        
-        //console.log("names")
-        //console.log(names)
-        //console.log("names.length")
-        //console.log(names.length)
         return  state.merge({
             recentClimbers: names,
             name: action.name,
-            climbTime: action.climbTime,
+            climbTime: action.climbTime, 
             activeClimber: true })
             
        //return new Immutable({  name: action.name,  climbTime: action.climbTime })
@@ -97,6 +88,7 @@ export const INITIAL_STATE = new Immutable({
         return  state.merge({ name: action.name }) 
      }
 
+    
      
      const changeLeaderboardFilter = (state, action) => {
         console.log("-------------------Inside  changeLeaderboardFilter -------------------")
@@ -157,8 +149,7 @@ export const INITIAL_STATE = new Immutable({
         return  state.merge({ leaderboard: action.leaderboard })
       
      }
-
-     
+ 
      const onRouteIdChange = (state, action) => {
         //console.log("-------------------Inside  onRouteIdChange -------------------")
         //console.log(action.id)
@@ -193,7 +184,7 @@ export const reducer = createReducer(INITIAL_STATE, {
     [Types.SET_AUTHENTICATION_IS_LOADING]: setAuthenticationIsLoading,
     [Types.SET_USER_AUTHENTICATED]: setUserAuthenticated,
     [Types.CHANGE_ALL_CLIMB_DATA]:changeAllClimbData,
-    [Types.CHANGE_LEADERBOARD_FILTER]:changeLeaderboardFilter,
+    [Types.CHANGE_LEADERBOARD_FILTER]:changeLeaderboardFilter,  
     
 })
 

@@ -111,5 +111,25 @@ module.exports = StyleSheet.create({
     },
     button: {
         alignSelf: 'stretch', 
-    }
+    },
+
+
+
+
+    root: {flex: 1, padding: 20},
+    title: {textAlign: 'center', fontSize: 30},
+    codeFieldRoot: {marginTop: 20},
+    cell: {
+      width: 40,
+      height: 40,
+      lineHeight: 38,
+      fontSize: 24,
+      borderWidth: 2,
+      borderColor: '#00000030',
+      textAlign: 'center',
+    },
+    focusCell: {
+      borderColor: '#000',
+    },
+
 })

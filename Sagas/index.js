@@ -1,5 +1,5 @@
 import {fork, takeEvery, takeLatest, all} from 'redux-saga/effects' 
-import {Actions} from '../ReduxActions'
+import {Actions} from '../Redux/ReduxActions'
 
 import {beginClimb, initFirebaseVariables, sendGymSettingsToFirebase} from './firebaseSagas'
  

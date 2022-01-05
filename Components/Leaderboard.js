@@ -1,7 +1,7 @@
 import React from 'react';
 import { DataTable } from 'react-native-paper';
 import { connect } from 'react-redux'
-import Actions from '../ReduxActions'
+import Actions from '../Redux/ReduxActions'
 import { LeaderboardFilters } from '../Lib/LeaderboardFilters';
 import { 
     ScrollView, 
@@ -281,8 +281,8 @@ function mapStateToProps(state) {
     //console.log("state")
     //console.log(state)
     return {
-        allClimbData: state.zones.allClimbData, 
-        leaderboardFilter: state.zones.leaderboardFilter,
+        allClimbData: state.route.allClimbData, 
+        leaderboardFilter: state.route.leaderboardFilter,
     };
   }
   

@@ -1,4 +1,4 @@
-import  Actions  from "../ReduxActions" 
+import  Actions  from "../Redux/ReduxActions" 
 import {put, call, select } from 'redux-saga/effects' 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import database from '@react-native-firebase/database';
@@ -6,10 +6,11 @@ import database from '@react-native-firebase/database';
 
 
 // State Variables
-export const currentName = state => state.zones.name
-export const failedClimbs = state => state.zones.failedClimbs
-export const climbingGymName = state => state.zones.climbingGymName
-export const routeID = state => state.zones.routeId
+export const currentName = state => state.route.name
+export const failedClimbs = state => state.route.failedClimbs
+export const climbingGymName = state => state.route.climbingGymName
+export const routeID = state => state.route.routeId
+export const passcode = state => state.route.passcode
 
  
 
@@ -55,17 +56,75 @@ export function* beginClimb() {
 
 
 export function* sendGymSettingsToFirebase(){
-    //console.log("-------------------Inside *  sendGymSettingsToFirebase -------------------")
-
+    console.log("-------------------Inside *  sendGymSettingsToFirebase -------------------")
+    var newRoute = false;
     // Send data to firebase
     const currentclimbingGymName = yield select(climbingGymName) 
     const currentRouteID = yield select(routeID) 
-    database().ref('/' + currentRouteID).update({
-        ClimbingGymName: currentclimbingGymName, 
-    })
-    .then(() => console.log('Data set.'));
+    const currentPasscode = yield select(passcode) 
+    let unixTime = Math.floor( Date.now() / 1000 )
+
+    database().ref('/' + currentRouteID + '/SuccessfulClimbs').once("value").then(snapshot => {
+        if(snapshot.val()){
+            console.log('---------------This route ID already Exists!!-------')
+            //console.log('snapshot.val()')
+            //console.log(snapshot.val())
+
+            console.log('------------------------Updating Existing Route-------') 
+        
+
+            database().ref('/' + currentRouteID).update({
+                ClimbingGymName: currentclimbingGymName, 
+            })
+            .then(() => console.log('Data set.'));
+    
 
 
+
+        }
+        else{
+            // Populate initial data for new climbing set
+            console.log('------------------------This route ID DOES NOT Exist!!!!!!-------') 
+            newRoute = true;
+
+            console.log('------------------------Creating New Route-------') 
+            database().ref('/' + currentRouteID).set({
+                ClimbStartTime: unixTime, 
+                ClimbingGymName: currentclimbingGymName, 
+                CurrentClimber: "",
+                FailedClimbs:0,
+                SuccessfulClimbs:0,
+                Passcode:currentPasscode,
+    
+            })
+            .then(() => console.log('Data set.'));
+
+
+        }
+    });
+
+    if(newRoute){
+        // console.log('------------------------Creating New Route-------') 
+        // database().ref('/' + currentRouteID).set({
+        //     ClimbingGymName: currentclimbingGymName, 
+        //     CurrentClimber: "",
+        //     FailedClimbs:0,
+        //     SuccessfulClimbs:0
+
+        // })
+        // .then(() => console.log('Data set.'));
+    }
+    else{
+        // console.log('------------------------Updating Existing Route-------') 
+        
+
+        // database().ref('/' + currentRouteID).update({
+        //     ClimbingGymName: currentclimbingGymName, 
+        // })
+        // .then(() => console.log('Data set.'));
+
+
+    }
     //console.log("Saving currentRouteID")
     //console.log(currentRouteID)
     //Save QR code that is used as root in database for this climbing gym   
@@ -84,29 +143,33 @@ const storeData = async (value) => {
 
 
 export function* initFirebaseVariables() {
-    //console.log("-------------------Inside *  initFirebaseVariables -------------------")
+
+    console.log("-------------------Inside *  initFirebaseVariables -------------------")
  
- const currentRouteID = yield select(routeID) 
+    const currentRouteID = yield select(routeID) 
     var reference = database().ref('/' + currentRouteID);
 
-     const snapshot = yield call( function(){
-         return new Promise(function(resolve, reject){
-             reference.once('value', function(snap){
+    const snapshot = yield call( function(){
+        return new Promise(function(resolve, reject){
+            reference.once('value', function(snap){
                 let json =  snap.val()
-          
-                failedClimbsData = json["FailedClimbs"];
-                 
-                
+        
+                failedClimbsData = json["FailedClimbs"]; 
+                currentPasscode = json["Passcode"]
                 ClimbingGymName = json["ClimbingGymName"]; 
-
-                resolve(failedClimbsData)
-             })
-         }) 
-     });
  
+                resolve(failedClimbsData)
+            })
+        }) 
+    }); 
+    console.log("ClimbingGymName")
+    console.log(ClimbingGymName)
+    console.log("failedClimbsData") 
+    console.log(failedClimbsData)
+
     yield put(Actions.updateFailedClimbs(failedClimbsData))
     yield put(Actions.onClimbingGymNameChange(ClimbingGymName))
-    
+        
 }
 
 

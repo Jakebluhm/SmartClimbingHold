@@ -1,11 +1,11 @@
 
 import React from 'react';
 import { connect } from 'react-redux'
-import Actions from '../ReduxActions'
+import Actions from '../Redux/ReduxActions'
 import PropTypes from 'prop-types'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {onSigOut} from './AuthenticationScreen'
+// import {onSigOut} from './AuthenticationScreen'
 
 import { 
     Text, 
@@ -13,33 +13,77 @@ import {
     View,
     TextInput, 
   } from 'react-native';
-
+  import auth, { firebase } from '@react-native-firebase/auth'; 
+  import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import  CreatePasscodeScreenContainer  from '../Components/CreatePasscodeScreen'; 
+import { NavigationEvents } from 'react-navigation';
+import { PasscodeCreationStates } from '../Lib/PasscodeCreationStates';
 
   const s = require('../Styles/StyleSheet');
 
 
   
 
-export  class GymSettingsScreen extends React.Component 
+export  class GymSettingsScreen extends React.Component  
 { 
     static propTypes = {
         climbingGymName: PropTypes.string.isRequired, 
-        routeId: PropTypes.string.isRequired, 
+        routeId: PropTypes.string.isRequired,  
+        passcode: PropTypes.string.isRequired,  
+        passcodeState: PropTypes.number.isRequired,
 
         onClimbingGymNameChange: PropTypes.func.isRequired,
         saveGymSettingsRequest: PropTypes.func.isRequired,
         onRouteIdChange: PropTypes.func.isRequired,
         routeIdSaved:  PropTypes.func.isRequired,
+        setUserAuthenticated: PropTypes.func.isRequired,
     }
 
+    async  onSigOut() {
+        console.log('--------onSigOut() in AuthenticationScreen.js---------')
+        try{
 
+            
+            await firebase.auth().signOut();
+            GoogleSignin.revokeAccess();
+            auth().
+            // Sign-out successful.
+            console.log('--------onSigOut() in AuthenticationScreen.js----   SUCCESSFUL-----')
+            this.props.setUserAuthenticated(false)
+            
+        }
+         catch (error){
+             
+              console.log('--------onSigOut() in AuthenticationScreen.js----   ERROR!!-----')
+              console.log(error)
+          }
+      } 
 
     onSaveButtonPress(){  
         this.props.saveGymSettingsRequest();
         this.props.routeIdSaved(true);
         
     }
+    componentDidMount(){
+        try{
+        this._unsubscribe = this.props.navigation.addListener('focus', () => {
+            console.log('Gym Settings Screen did foucs')
+          });
+        }
+        catch(err){
+            console.log(err)
+        }
+    }
 
+    
+    componentWillUnmount(){
+        try{
+            this._unsubscribe();
+        }
+        catch(err){
+            console.log(err)
+        }
+    }
  
     constructor() 
     {
@@ -49,49 +93,57 @@ export  class GymSettingsScreen extends React.Component
 
     render()
     { 
-        const {climbingGymName, routeId } = this.props
-        
-        return (  
-        <View style={[s.container, { flexDirection: "column" }]}>
-            <Text style={s.GymSettingsText}>
-                <Icon name="domain" style={{flex:1, paddingBottom:1}} size={25} color="#000" />Climbing Gym Name
-            </Text> 
-            <TextInput
-                style={s.input}
-                onChangeText={text => {   
-                    var cleanText = text.replace(/[.$#\[\]\/]/gi, '')
-                    this.props.onClimbingGymNameChange(cleanText) 
-                    }}
-                value={climbingGymName} 
-                placeholder="Enter Climbing Gym Name"
-                keyboardType="default"
-            /> 
+        const {climbingGymName, routeId,  passcodeState } = this.props  
 
-            <Text style={s.GymSettingsText}>
-                <Icon name="qr-code" style={{flex:1, paddingBottom:1}} size={25} color="#000" />Route ID
-            </Text> 
-            <TextInput
-                style={s.input}
-                onChangeText={text => {   
-                    var cleanText = text.replace(/[.$#\[\]\/]/gi, '')
-                    this.props.onRouteIdChange(cleanText)  
-                    this.props.routeIdSaved(false);
-                    }}
-                value={routeId} 
-                placeholder="Enter Route ID or Scan QR Code"
-                keyboardType="default"
-            /> 
+        return ( 
+            <View style={[s.container, { flexDirection: "row" }]}>
+                <View style={[s.container, { flexDirection: "column" }]}>
+                    <Text style={s.GymSettingsText}>
+                        <Icon name="domain" style={{flex:1, paddingBottom:1}} size={25} color="#000" />Climbing Gym Name
+                    </Text> 
+                    <TextInput
+                        editable={passcodeState == PasscodeCreationStates.UNLOCKED}
+                        style={s.input}
+                        onChangeText={text => {   
+                            var cleanText = text.replace(/[.$#\[\]\/]/gi, '')
+                            this.props.onClimbingGymNameChange(cleanText) 
+                            }}
+                        value={climbingGymName} 
+                        placeholder="Enter Climbing Gym Name"
+                        keyboardType="default"
+                    /> 
+
+                    <Text style={s.GymSettingsText}>
+                        <Icon name="qr-code" style={{flex:1, paddingBottom:1}} size={25} color="#000" />Route ID
+                    </Text> 
+                    <TextInput
+                        editable={passcodeState == PasscodeCreationStates.UNLOCKED}
+                        style={s.input} 
+                        onChangeText={text => {   
+                            var cleanText = text.replace(/[.$#\[\]\/]/gi, '')
+                            this.props.onRouteIdChange(cleanText)   
+                            this.props.routeIdSaved(false);
+                            }}
+                        value={routeId} 
+                        placeholder="Enter Route ID or Scan QR Code"
+                        keyboardType="default"
+                    /> 
 
 
-            <View style={s.containerEnd}>
-              <Button style={s.button} disabled={false} color="#F98455" title="Save" onPress={this.onSaveButtonPress} /> 
+                    <View style={s.containerEnd}>
+                    <Button style={s.button} disabled={passcodeState != PasscodeCreationStates.UNLOCKED} color="#F98455" title="Save" onPress={this.onSaveButtonPress} /> 
+                    </View>
+                    <Button
+                        disabled={passcodeState != PasscodeCreationStates.UNLOCKED}
+                        title="Sign Out"
+                        onPress={() => this.onSigOut().then(() => console.log('Signed out!'))}
+                    />
+                </View>
+                <View style={[s.container, { flexDirection: "column" }]}>
+                    <CreatePasscodeScreenContainer></CreatePasscodeScreenContainer>
+                </View> 
             </View>
-            <Button
-                title="Sign Out"
-                onPress={() => onSigOut().then(() => console.log('Signed out!'))}
-            />
-        </View>
-
+ 
         );
     } 
 
@@ -102,8 +154,10 @@ export  class GymSettingsScreen extends React.Component
 
   function mapStateToProps(state) { 
     return {
-        climbingGymName: state.zones.climbingGymName,
-        routeId: state.zones.routeId,
+        climbingGymName: state.route.climbingGymName,
+        routeId: state.route.routeId,
+        passcode : state.climbingGym.passcode, 
+        passcodeState: state.climbingGym.passcodeState
     };
   }
   
@@ -112,6 +166,7 @@ export  class GymSettingsScreen extends React.Component
     saveGymSettingsRequest: Actions.saveGymSettingsRequest,
     onRouteIdChange: Actions.onRouteIdChange,
     routeIdSaved: Actions.routeIdSaved,
+    setUserAuthenticated: Actions.setUserAuthenticated,
   }
   
   export default connect(mapStateToProps, mapDispatchToProps)(GymSettingsScreen)

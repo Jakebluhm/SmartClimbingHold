@@ -14,7 +14,7 @@ import {
   } from 'react-native';
  
 import { connect } from 'react-redux'
-import Actions from '../ReduxActions'
+import Actions from '../Redux/ReduxActions'
 import PropTypes from 'prop-types' 
 
 //

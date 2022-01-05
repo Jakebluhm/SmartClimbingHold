@@ -6,7 +6,7 @@ import {AppRegistry} from 'react-native';
 import App from './App';
 import {name as appName} from './app.json'; 
 
-import ReactDOM from "react-dom";
+//import ReactDOM from "react-dom";
 
 import { Provider } from "react-redux";
 import createStore from './Redux';
