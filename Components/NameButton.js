@@ -23,6 +23,7 @@ export  class NameButton extends React.Component {
     static propTypes = {
         name: PropTypes.string.isRequired,
         onNameChange: PropTypes.func.isRequired,
+        
     }
     constructor() {
         super()
@@ -38,7 +39,7 @@ export  class NameButton extends React.Component {
         return ( 
             <TouchableOpacity style={styles.container} onPress={() => this.onPress(name)}>
                 <LinearGradient
-                colors={["#cc2b5e", "#753a88"]}
+                colors={["#49b073", "#008047"]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 0, y: 1 }}
                 style={{ borderRadius: 45  }}
@@ -55,7 +56,7 @@ export  class NameButton extends React.Component {
 
 const styles = StyleSheet.create({
     container:{
-        padding:2.5 ,
+        padding:7 ,
         flexShrink :0
     },
     registerButtonStyle: {
@@ -64,9 +65,9 @@ const styles = StyleSheet.create({
       paddingBottom: 7,
       paddingTop: 7,
       margin: 3, 
-      backgroundColor: '#a5b0ff',
+      backgroundColor: '#ffffff',
       borderRadius: 45
-  },
+  }, 
   nameBubble:{   
       fontSize: 18,
       textAlign: 'left',   

@@ -25,7 +25,7 @@ export  class Leaderboard extends React.Component {
 
         leaderboardData: PropTypes.array.isRequired,
         leaderboardFilter: PropTypes.number.isRequired,
-        allClimbData: PropTypes.object.isRequired,
+        allClimbData: PropTypes.object,
         changeLeaderboardFilter: PropTypes.func.isRequired,
     }
 
@@ -60,21 +60,20 @@ export  class Leaderboard extends React.Component {
         const {allClimbData, leaderboardFilter} = this.props
         const numEntries = (data.length < 20)? data.length : 20
   
-        console.log('allClimbData')
-        console.log(allClimbData)
+        // console.log('allClimbData')
+        // console.log(allClimbData)
 
         //Throw all climbs into array with name, climbTime, dateTime
         var climberDateTimes = []
         for (const name in allClimbData){
-            console.log('---name');
-            console.log(name);
-            console.log('allClimbData[name]')
-            console.log(allClimbData[name])
+            // console.log('---name');
+            // console.log(name);
+            // console.log(allClimbData[name])
             for(const climbTime in allClimbData[name] ){ 
-                console.log('climbTime')
-                console.log(climbTime)
-                console.log('allClimbData[name][climbTime]')
-                console.log(allClimbData[name][climbTime])
+                // console.log('climbTime')
+                // console.log(climbTime)
+                // console.log('allClimbData[name][climbTime]')
+                // console.log(allClimbData[name][climbTime])
 
                 var date = new Date(climbTime * 1000);
                 climberDateTimes.push({name:name, climbTime:allClimbData[name][climbTime], dateTime:date}) 
@@ -82,17 +81,17 @@ export  class Leaderboard extends React.Component {
 
         }
 
-        console.log('climberDateTimes')
-        console.log(climberDateTimes)
+        //console.log('climberDateTimes')
+        //console.log(climberDateTimes)
         
 
         // Sort climbs chronologically                                                      CHANGE TO FILTERD BY RANGE SELECTOR YEAR DAY MONTH ALL TIME
         var selectedDateRange =  new Date(Date.now())
-        console.log(selectedDateRange)
+        // console.log(selectedDateRange)
         selectedDateRange.setDate(selectedDateRange.getDate() - leaderboardFilter)
-        console.log(selectedDateRange)
-        console.log('leaderboardFilter')
-        console.log(leaderboardFilter)
+        // console.log(selectedDateRange)
+        // console.log('leaderboardFilter')
+        // console.log(leaderboardFilter)
  
         var filteredClimberDateTimes
         if(leaderboardFilter > 0){
@@ -105,9 +104,83 @@ export  class Leaderboard extends React.Component {
 
 
 
+        var LeaderboardFilterButtons = null
+        if(leaderboardFilter == LeaderboardFilters.ALLTIME){
+            LeaderboardFilterButtons = 
+            <View style={s.horizontalContainerCentered}>
+                <TouchableOpacity  onPress={() => this.leaderboardAllTimeButton()}>
+                    <Image style={s.image} source={require('../Assets/LeaderboardButton/AllTimeButtonDark.png')} />
+                </TouchableOpacity >
+                <TouchableOpacity  onPress={() => this.leaderboardYearButton()}>
+                    <Image style={s.image} source={require('../Assets/LeaderboardButton/YearButton.png')} />
+                </TouchableOpacity >
+                <TouchableOpacity  onPress={() => this.leaderboardMonthButton()}>
+                    <Image style={s.image} source={require('../Assets/LeaderboardButton/MonthButton.png')} />
+                </TouchableOpacity >
+                <TouchableOpacity  onPress={() => this.leaderboardDayButton()}>
+                    <Image style={s.image} source={require('../Assets/LeaderboardButton/DayButton.png')} />
+                </TouchableOpacity >
+            </View>
+        }
+        else if(leaderboardFilter == LeaderboardFilters.YEAR){
+            LeaderboardFilterButtons =
+            <View style={s.horizontalContainerCentered}>
+                <TouchableOpacity  onPress={() => this.leaderboardAllTimeButton()}>
+                    <Image style={s.image} source={require('../Assets/LeaderboardButton/AllTimeButton.png')} />
+                </TouchableOpacity >
+                <TouchableOpacity  onPress={() => this.leaderboardYearButton()}>
+                    <Image style={s.image} source={require('../Assets/LeaderboardButton/YearButtonDark.png')} />
+                </TouchableOpacity >
+                <TouchableOpacity  onPress={() => this.leaderboardMonthButton()}>
+                    <Image style={s.image} source={require('../Assets/LeaderboardButton/MonthButton.png')} />
+                </TouchableOpacity >
+                <TouchableOpacity  onPress={() => this.leaderboardDayButton()}>
+                    <Image style={s.image} source={require('../Assets/LeaderboardButton/DayButton.png')} />
+                </TouchableOpacity >
+            </View>
+            
+        }
+        else if(leaderboardFilter == LeaderboardFilters.MONTH){
+            LeaderboardFilterButtons =
+             <View style={s.horizontalContainerCentered}>
+                <TouchableOpacity  onPress={() => this.leaderboardAllTimeButton()}>
+                    <Image style={s.image} source={require('../Assets/LeaderboardButton/AllTimeButton.png')} />
+                </TouchableOpacity >
+                <TouchableOpacity  onPress={() => this.leaderboardYearButton()}>
+                    <Image style={s.image} source={require('../Assets/LeaderboardButton/YearButton.png')} />
+                </TouchableOpacity >
+                <TouchableOpacity  onPress={() => this.leaderboardMonthButton()}>
+                    <Image style={s.image} source={require('../Assets/LeaderboardButton/MonthButtonDark.png')} />
+                </TouchableOpacity >
+                <TouchableOpacity  onPress={() => this.leaderboardDayButton()}>
+                    <Image style={s.image} source={require('../Assets/LeaderboardButton/DayButton.png')} />
+                </TouchableOpacity >
+            </View>
+        }
+        else if(leaderboardFilter == LeaderboardFilters.DAY){
+            LeaderboardFilterButtons =
+            <View style={s.horizontalContainerCentered}>
+                <TouchableOpacity  onPress={() => this.leaderboardAllTimeButton()}>
+                    <Image style={s.image} source={require('../Assets/LeaderboardButton/AllTimeButton.png')} />
+                </TouchableOpacity >
+                <TouchableOpacity  onPress={() => this.leaderboardYearButton()}>
+                    <Image style={s.image} source={require('../Assets/LeaderboardButton/YearButton.png')} />
+                </TouchableOpacity >
+                <TouchableOpacity  onPress={() => this.leaderboardMonthButton()}>
+                    <Image style={s.image} source={require('../Assets/LeaderboardButton/MonthButton.png')} />
+                </TouchableOpacity >
+                <TouchableOpacity  onPress={() => this.leaderboardDayButton()}>
+                    <Image style={s.image} source={require('../Assets/LeaderboardButton/DayButtonDark.png')} />
+                </TouchableOpacity >
+            </View>
+        }
+
+
+
+
           
-        console.log('filteredClimberDateTimes')
-        console.log(filteredClimberDateTimes)
+        // console.log('filteredClimberDateTimes')
+        // console.log(filteredClimberDateTimes)
 
         var climbData = []
         filteredClimberDateTimes.map(climbInfo => {
@@ -117,8 +190,8 @@ export  class Leaderboard extends React.Component {
         
         climbData = climbData.sort(compare)
 
-        console.log('climbData')
-        console.log(climbData)
+        // console.log('climbData')
+        // console.log(climbData)
 
         let leaderBoardEntries = []
 
@@ -211,22 +284,10 @@ export  class Leaderboard extends React.Component {
   
         return (
             
-            <View style={[s.container, { flexDirection: "column" }]}>
-                <View style={{flex:1, alignItems:'center' }}>
-                    <View style={s.horizontalContainerCentered}>
-                    <TouchableOpacity  onPress={() => this.leaderboardAllTimeButton()}>
-                        <Image style={s.image} source={require('../Assets/LeaderboardButton/AllTimeButton.png')} />
-                    </TouchableOpacity >
-                    <TouchableOpacity  onPress={() => this.leaderboardYearButton()}>
-                        <Image style={s.image} source={require('../Assets/LeaderboardButton/YearButton.png')} />
-                    </TouchableOpacity >
-                    <TouchableOpacity  onPress={() => this.leaderboardMonthButton()}>
-                        <Image style={s.image} source={require('../Assets/LeaderboardButton/MonthButton.png')} />
-                    </TouchableOpacity >
-                    <TouchableOpacity  onPress={() => this.leaderboardDayButton()}>
-                        <Image style={s.image} source={require('../Assets/LeaderboardButton/DayButton.png')} />
-                    </TouchableOpacity >
-                    </View>
+            <View style={[s.containerLB]}>
+                <View style={{flex:1, alignItems:'center'  }}>
+                    
+                        {LeaderboardFilterButtons} 
                 </View>
                 <DataTable style={styles.table}>
             
@@ -242,7 +303,7 @@ export  class Leaderboard extends React.Component {
                         <DataTable.Title style={styles.name}> 
                             <View style={{flex:1, flexDirection:'row', }}> 
                                 <Text style={styles.tableHeaderFont}>Name</Text>
-                            </View>
+                            </View> 
                         </DataTable.Title>
                         <DataTable.Title style={styles.time}>
                             <View style={{flex:1, flexDirection:'row', }}> 
@@ -301,8 +362,9 @@ function mapStateToProps(state) {
 
 const styles = StyleSheet.create({ 
     table:{ 
-        flex:20,
-        padding: 10,
+        flex:18,
+        padding: 0, 
+        
     },
     tableFont:{ 
         margin: 0,
@@ -327,8 +389,8 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection:'row',
         alignContent:'flex-start',     
-        borderTopRightRadius: 10,
-        borderTopLeftRadius: 10,
+        borderTopRightRadius: 15,
+        borderTopLeftRadius: 15,
         borderWidth: 2,
         borderColor: '#000000', 
         padding:1
@@ -336,8 +398,8 @@ const styles = StyleSheet.create({
     tableRowBottom:{
         flex: 1,
         flexDirection:'row', 
-        borderBottomRightRadius: 10,
-        borderBottomLeftRadius: 10,   
+        borderBottomRightRadius: 15,
+        borderBottomLeftRadius: 15,   
         borderWidth:2, 
         borderBottomWidth:2,
         borderBottomColor :'#000000', 
@@ -347,10 +409,10 @@ const styles = StyleSheet.create({
     tableRowSingle:{
         flex: 1,
         flexDirection:'row', 
-        borderBottomRightRadius: 10,
-        borderBottomLeftRadius: 10,   
-        borderTopRightRadius: 10,
-        borderTopLeftRadius: 10,
+        borderBottomRightRadius: 15,
+        borderBottomLeftRadius: 15,   
+        borderTopRightRadius: 15,
+        borderTopLeftRadius: 15,
         borderWidth:2, 
         borderBottomWidth:2,
         borderBottomColor :'#000000', 

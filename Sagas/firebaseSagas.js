@@ -21,7 +21,7 @@ export function* beginClimb() {
  
     const currentRouteID = yield select(routeID) 
     var reference = database().ref('/' + currentRouteID);
-
+ 
      const snapshot = yield call( function(){
          return new Promise(function(resolve, reject){
              reference.once('value', function(snap){
@@ -35,7 +35,7 @@ export function* beginClimb() {
  
 
      let unixTime = Math.floor( Date.now() / 1000 )
-     //console.log(unixTime) ;
+     console.log(unixTime) ;
  
 
     const newName = yield select(currentName) 
@@ -170,6 +170,16 @@ export function* initFirebaseVariables() {
     yield put(Actions.updateFailedClimbs(failedClimbsData))
     yield put(Actions.onClimbingGymNameChange(ClimbingGymName))
         
+}
+
+
+export function* setClimberData(){
+    console.log("-------------------Inside *  setClimberData -------------------")
+ 
+    const currentRouteID = yield select(routeID)  
+
+    database().ref('/' + currentRouteID + '/ClimberData').remove()
+    .then(() => console.log('climber data removed'));
 }
 
 

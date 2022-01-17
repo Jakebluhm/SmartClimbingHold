@@ -21,6 +21,8 @@ const {Types, Creators} = createActions({
     setUserAuthenticated: ['auth'],
     changeAllClimbData: ['data'],
     changeLeaderboardFilter: ['filter'],
+    resetClimberDataRequest: null,
+    setIsButtonCoolingDown: ['cooldown']
  
 
 
@@ -39,6 +41,7 @@ export const INITIAL_STATE = new Immutable({
     climbingGymName: "",
     routeId: "", 
     leaderboardFilter: 0,
+    buttonCooldown: false,
     allClimbData: {},
     isLoading: true,
     routeIdSet: false,
@@ -88,7 +91,13 @@ export const INITIAL_STATE = new Immutable({
         return  state.merge({ name: action.name }) 
      }
 
-    
+     
+     const setIsButtonCoolingDown = (state, action) => {
+      console.log("-------------------Inside  setIsButtonCoolingDown -------------------")
+
+      console.log(action.cooldown)
+      return  state.merge({ buttonCooldown: action.cooldown }) 
+   }
      
      const changeLeaderboardFilter = (state, action) => {
         console.log("-------------------Inside  changeLeaderboardFilter -------------------")
@@ -185,6 +194,7 @@ export const reducer = createReducer(INITIAL_STATE, {
     [Types.SET_USER_AUTHENTICATED]: setUserAuthenticated,
     [Types.CHANGE_ALL_CLIMB_DATA]:changeAllClimbData,
     [Types.CHANGE_LEADERBOARD_FILTER]:changeLeaderboardFilter,  
+    [Types.SET_IS_BUTTON_COOLING_DOWN]:setIsButtonCoolingDown,  
     
 })
 

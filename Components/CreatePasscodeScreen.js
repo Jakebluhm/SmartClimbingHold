@@ -4,6 +4,7 @@ import {
     Button, 
     StyleSheet,
     Text,
+    Animated,
     View, 
     SafeAreaView,
 
@@ -73,6 +74,8 @@ export  class CreatePasscodeScreen extends React.Component
         console.log('-----------------------------removeItemValue() in CreatePasscodeScreen-------------')
         try {
             await AsyncStorage.removeItem(key); 
+            this.props.tempPasscodeChanged('');
+            this.props.passcodeChanged('');
             this.props.setPasscodeState(PasscodeCreationStates.ENTER_FIRST_PASSCODE)  
             console.log('successfully removed value')
             return true;
@@ -95,19 +98,41 @@ export  class CreatePasscodeScreen extends React.Component
         console.log(passcode)
 
         if(passcodeState == PasscodeCreationStates.ENTER_FIRST_PASSCODE && tempPasscode.length == 4){
+            
+            console.log('Setting state to confirm passcode????????')
             this.props.setPasscodeState(PasscodeCreationStates.CONFIRM_PASSCODE)  
         }
-        else if(passcodeState == PasscodeCreationStates.CONFIRM_PASSCODE && tempPasscode == passcode){ 
+        else if(passcodeState == PasscodeCreationStates.CONFIRM_PASSCODE && tempPasscode == passcode && passcode.length == 4){ 
+            console.log('Clearing temp and saving new passcode setting to unlocked???????')
             this.props.tempPasscodeChanged('');
             storeData(passcode).then(() => this.props.setPasscodeState(PasscodeCreationStates.UNLOCKED)  )
         }
-        else if(passcodeState == PasscodeCreationStates.SAVED && tempPasscode == passcode){
+        else if(passcodeState == PasscodeCreationStates.CONFIRM_PASSCODE && tempPasscode != passcode && tempPasscode.length == 4  && passcode.length == 4){ 
+            console.log('New passcodes do not match go back to enter first passcode')
+            this.props.tempPasscodeChanged('');
+            this.props.setPasscodeState(PasscodeCreationStates.ENTER_FIRST_PASSCODE)  
+        }
+        else if(passcodeState == PasscodeCreationStates.SAVED && tempPasscode != passcode && tempPasscode.length == 4  && passcode.length == 4){ 
+            console.log('Passcode incorrect')
+            this.props.tempPasscodeChanged(''); 
+        }
+        else if(passcodeState == PasscodeCreationStates.SAVED && tempPasscode == passcode && passcode.length == 4){
+            console.log('Setting passcode to unlocked????????')
             this.props.setPasscodeState(PasscodeCreationStates.UNLOCKED)  
         }
 
         
     }
  
+    
+    startShake = () => {
+        Animated.sequence([
+          Animated.timing(this.shakeAnimation, { toValue: 10, duration: 100, useNativeDriver: true }),
+          Animated.timing(this.shakeAnimation, { toValue: -10, duration: 100, useNativeDriver: true }),
+          Animated.timing(this.shakeAnimation, { toValue: 10, duration: 100, useNativeDriver: true }),
+          Animated.timing(this.shakeAnimation, { toValue: 0, duration: 100, useNativeDriver: true })
+        ]).start();
+     }
 
     async componentDidMount(){ 
         console.log('---componentDidMount createPAsscodeScreen')
@@ -123,6 +148,7 @@ export  class CreatePasscodeScreen extends React.Component
 
     constructor() {
         console.log('---constructor createPAsscodeScreen')
+        //this.shakeAnimation = new Animated.Value(0);
         super() 
     }
 
@@ -176,7 +202,7 @@ export  class CreatePasscodeScreen extends React.Component
             case PasscodeCreationStates.CONFIRM_PASSCODE:
                 console.log('PasscodeCreationStates.CONFIRM_PASSCODE')
                 passcodeView = 
-                <View style={[s.container, {alignItems:'center', paddingTop:250 }]}>
+                <View style={[s.container, {alignItems:'center', paddingTop:250 }  ]}>
                     <Text style={s.GymSettingsText}>
                         <Icon name="lock" style={{flex:1, paddingBottom:1}} size={25} color="#000" /> Enter Re-Enter Passcode
                     </Text> 
@@ -226,9 +252,10 @@ export  class CreatePasscodeScreen extends React.Component
                 <Button
                         title="Reset Passcode"
                         onPress={() => this.removeItemValue('@Passcode').then(() => {
-                            console.log('PAsscode Reset!')
-                            this.props.tempPasscodeChanged('');
-                            this.props.passcodeChanged('');
+                             console.log('PAsscode Reset!')
+                            // this.props.tempPasscodeChanged('');
+                            // this.props.passcodeChanged('');
+                            //this.props.setPasscodeState(PasscodeCreationStates.ENTER_FIRST_PASSCODE)  
                         })}
                     />
                 break;    

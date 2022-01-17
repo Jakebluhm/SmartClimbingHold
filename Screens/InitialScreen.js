@@ -34,7 +34,8 @@ export  class InitialScreen extends React.Component
         routeId: PropTypes.string.isRequired, 
         isLoading: PropTypes.bool.isRequired,
         routeIdSet: PropTypes.bool.isRequired,
-        authenticationIsLoading: PropTypes.bool.isRequired, 
+        authenticationIsLoading: PropTypes.bool.isRequired,  
+        climbingGymName: PropTypes.string.isRequired, 
 
         setIsLoading: PropTypes.func.isRequired,
         onRouteIdChange: PropTypes.func.isRequired,
@@ -82,7 +83,7 @@ export  class InitialScreen extends React.Component
     render()
     { 
         //console.log('----------------------- initialScreenjs render()------------------------')
-        const { isLoading, routeId, routeIdSet, authenticationIsLoading, userAuthenticated} = this.props
+        const { isLoading, routeId, routeIdSet, authenticationIsLoading, userAuthenticated, climbingGymName} = this.props
         //console.log('---routeId.length')
         //console.log(routeId.length)
         //console.log('---isLoading')
@@ -91,6 +92,8 @@ export  class InitialScreen extends React.Component
         //console.log(routeIdSet)
         //console.log('---userAuthenticated')
         //console.log(userAuthenticated)
+
+        const HomeScreeName = (climbingGymName.length > 0)? climbingGymName : "Home"
         
         //const navigationRef = useNavigationContainerRef();
         return (  
@@ -124,9 +127,9 @@ export  class InitialScreen extends React.Component
                                         //   // Save the current route name for later comparison
                                         //   routeNameRef.current = currentRouteName;
                                         // }}
-                                      >
+                                      > 
                                             <Drawer.Navigator initialRouteName="Home">
-                                                <Drawer.Screen name="Home" component={SecondScreenContainer} /> 
+                                                <Drawer.Screen name={HomeScreeName} component={SecondScreenContainer} /> 
                                                 <Drawer.Screen name="Gym Settings" component={GymSettingsScreenContainer} />  
                                             </Drawer.Navigator> 
                                         </NavigationContainer> 
@@ -136,7 +139,7 @@ export  class InitialScreen extends React.Component
 
                                         </GymSettingsScreenContainer>
                                     }
-                            </View>
+                            </View> 
                         }
                     </View>
                 }
@@ -154,6 +157,7 @@ export  class InitialScreen extends React.Component
          routeIdSet: state.route.routeIdSet,
          authenticationIsLoading: state.route.authenticationIsLoading,
          userAuthenticated: state.route.userAuthenticated, 
+         climbingGymName: state.route.climbingGymName,
     };
   }
   
