@@ -22,8 +22,13 @@ const {Types, Creators} = createActions({
     changeAllClimbData: ['data'],
     changeLeaderboardFilter: ['filter'],
     resetClimberDataRequest: null,
-    setIsButtonCoolingDown: ['cooldown']
- 
+    setIsButtonCoolingDown: ['cooldown'],
+    setCurrentClimberName: ['name'],
+    setFailedClimbOnClick: ['set'],
+    setCurrentClimberFailures: ['failures'],
+    setCurrentClimberFailuresRequest: null,
+    setLastSuccessfulClimbs: ['num'],
+    setLeaderboardWidth: ['width']
 
 
 })
@@ -34,12 +39,13 @@ export default Creators;
 
 /* ------------------ Initial State -------------------*/
 export const INITIAL_STATE = new Immutable({
-    recentClimbers:[],
+    recentClimbers:[], 
     successfulClimbs: 0,
     failedClimbs: 0,
     activeClimber: false, 
     climbingGymName: "",
     routeId: "", 
+    failedClimbOnClick: false,
     leaderboardFilter: 0,
     buttonCooldown: false,
     allClimbData: {},
@@ -55,7 +61,11 @@ export const INITIAL_STATE = new Immutable({
         {name:"climber4", time:15},
     ],
     climbTime: 0,
-    name: "Jake"
+    name: "",
+    currentClimberName:"",
+    currentClimberFailures: 0,
+    lastSuccessfulClimbs: 0,
+    leaderboardWidth: 0,
 });
 
 // const refreshData = state => state.merge({
@@ -92,18 +102,32 @@ export const INITIAL_STATE = new Immutable({
      }
 
      
-     const setIsButtonCoolingDown = (state, action) => {
-      console.log("-------------------Inside  setIsButtonCoolingDown -------------------")
+     const setCurrentClimberName = (state, action) => {
+      //console.log("-------------------Inside  setCurrentClimberName -------------------")
 
-      console.log(action.cooldown)
+      //console.log(action.name)
+      return  state.merge({ currentClimberName: action.name }) 
+   }
+     
+     const setIsButtonCoolingDown = (state, action) => {
+    //console.log("-------------------Inside  setIsButtonCoolingDown -------------------")
+
+    //console.log(action.cooldown)
       return  state.merge({ buttonCooldown: action.cooldown }) 
    }
      
      const changeLeaderboardFilter = (state, action) => {
-        console.log("-------------------Inside  changeLeaderboardFilter -------------------")
+      //console.log("-------------------Inside  changeLeaderboardFilter -------------------")
  
-        console.log(action.filter)
+      //console.log(action.filter)
         return  state.merge({ leaderboardFilter: action.filter }) 
+     }
+
+     const setLeaderboardWidth = (state, action) => {
+      console.log("-------------------Inside  setLeaderboardWidth -------------------")
+ 
+      console.log(action.width)
+        return  state.merge({ leaderboardWidth: action.width }) 
      }
      
      const setIsLoading = (state, action) => {
@@ -169,17 +193,39 @@ export const INITIAL_STATE = new Immutable({
      const updateSuccessfulClimbs = (state, action) => {
         //console.log("-------------------Inside  updateSuccessfulClimbs -------------------")
         //console.log(action.climbs)
-        return  state.merge({ successfulClimbs: action.climbs, activeClimber: false }) 
+        return  state.merge({ successfulClimbs: action.climbs, activeClimber: false, failedClimbOnClick: false }) 
      }
+     
+
+     const setLastSuccessfulClimbs = (state, action) => {
+      //console.log("-------------------Inside  setLastSuccessfulClimbs -------------------")
+      //console.log(action.climbs)
+      return  state.merge({ lastSuccessfulClimbs: action.num }) 
+   }
+
 
      const updateFailedClimbs = (state, action) => {
         //console.log("-------------------Inside  updateFailedClimbs -------------------")
         //console.log(action.failedClimbs)
         return  state.merge({ failedClimbs: action.failedClimbs })
-      
+       
      }
 
+     
+     const setCurrentClimberFailures = (state, action) => {
+    console.log("-------------------Inside  setCurrentClimberFailures -------------------")
+    console.log(action.failures)
+      return  state.merge({ currentClimberFailures: action.failures })
+    
+   }
 
+     const setFailedClimbOnClick = (state, action) => {
+    //console.log("-------------------Inside  setFailedClimbOnClick -------------------")
+    //console.log(action.set)
+      return  state.merge({ failedClimbOnClick: action.set }) 
+   }
+
+ 
 export const reducer = createReducer(INITIAL_STATE, {
     [Types.BEGIN_CLIMB]: refreshData,
     [Types.ON_NAME_CHANGE]: nameChanged,
@@ -195,6 +241,10 @@ export const reducer = createReducer(INITIAL_STATE, {
     [Types.CHANGE_ALL_CLIMB_DATA]:changeAllClimbData,
     [Types.CHANGE_LEADERBOARD_FILTER]:changeLeaderboardFilter,  
     [Types.SET_IS_BUTTON_COOLING_DOWN]:setIsButtonCoolingDown,  
+    [Types.SET_CURRENT_CLIMBER_NAME]:setCurrentClimberName,
+    [Types.SET_FAILED_CLIMB_ON_CLICK]:setFailedClimbOnClick,
+    [Types.SET_CURRENT_CLIMBER_FAILURES]:setCurrentClimberFailures,
+    [Types.SET_LEADERBOARD_WIDTH]:setLeaderboardWidth,
     
 })
 

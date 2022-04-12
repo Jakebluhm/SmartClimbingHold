@@ -15,8 +15,15 @@ module.exports = StyleSheet.create({
         flexDirection: 'row', 
         padding: 30,
         backgroundColor: '#f0f0f0',
+    },     
+    verticalContainer:{
+        flex: 1,    
+        padding: 0,
+        backgroundColor: '#f0f0f0',
     },  
     containerLB:{
+        //width:600,
+        paddingHorizontal:25,
         flex: 1,      
         flexDirection: "column", 
         paddingRight:0,  
@@ -24,25 +31,203 @@ module.exports = StyleSheet.create({
     },  
     verticalHalfLeft:{
         flex: 1,    
-        borderWidth: 1, 
-        borderColor: '#ff0000',
+        // borderWidth: 1, 
+        // borderColor: '#ff0000',
     },  
     verticalHalfRight:{
         flex: 1,   
-        //borderWidth: 1, 
-        //borderColor: '#ff0000',
+ 
         paddingLeft: 50,
+        justifyContent:'center',
+        
+        // borderWidth: 1,  
+        // borderColor: '#00ff00',
+    },
+    passcodeText:{
+        fontSize: 48,   
+        color:'#000000',
+        marginTop:15,
+ 
+
+    },
+    settingsHeading:{   
+        fontSize: 26,
+        textAlign: 'left',     
+        paddingBottom:15,
+
+        
+        // borderWidth: 1,  
+        // borderColor: '#00ff00',
+    }, 
+    settingsLeftContainer:{
+        flex:1,
+        paddingLeft:15,
+        paddingRight:15,
+    },
+    horizontalContainerFlexEnd:{ 
+        flexDirection:'row',
+        justifyContent:'flex-end', 
+        paddingBottom:65,
+        
+        paddingRight:60,
+ 
+
+    },
+    settingsEntryContainer:{
+        
+        justifyContent:'space-between',
+        paddingRight:60,
+
+        // borderWidth: 1, 
+        // borderColor: '#0000ff',
+    },
+    horizontalContainerFlexBetween:{ 
+        flexDirection:'row',
+        justifyContent:'space-between',
+        
+        paddingRight:60, 
+        paddingBottom:15,
+
+        paddingTop:15,
+        // borderWidth: 1, 
+        // borderColor: '#0000ff',
+
+    },
+    horizontalContainerFlexBetween1:{ 
+        flexDirection:'row',
+        justifyContent:'space-between',
+        
+        paddingRight:30, 
+        paddingBottom:15,
+
+        paddingTop:15,
+        // borderWidth: 1, 
+        // borderColor: '#0000ff',
+
+    },
+    settingsInput: {
+        height: 45,//40,  
+        fontSize: 18, 
+        borderWidth: 1,
+        borderRadius: 15,
+        backgroundColor:'#ffffff',
+        paddingLeft: 10,   
+        paddingTop:10,
+        elevation:5,
+        
+        borderWidth: 1, 
+        borderColor: '#000000',
+
+    },
+
+
+
+
+    emailSection: {
+        height: 45,//40,  
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        backgroundColor:'rgba(0, 0, 0, 0.56)',
+        borderWidth: 1,
+        borderColor: '#FFFFFF',
+        borderRadius:15,
+    },
+    
+    passwordSection: {
+        
+        height: 45,//40,  
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        backgroundColor:'rgba(0, 0, 0, 0.56)',
+        borderWidth: 1,
+        borderColor: '#FFFFFF',
+        borderRadius:15,
+    },
+    searchIcon: {
+        padding: 8,
+        paddingRight:20
+    },
+    input: {
+        flex: 1,
+        paddingTop: 10,
+        paddingRight: 10,
+        paddingBottom: 10,
+        paddingLeft: 0,
+//        backgroundColor: '#fff',
+        color: '#424242',
+    },
+
+
+
+
+
+    loginInput: {
+        flex: 1,
+        height: 45,//40,  
+        fontSize: 18, 
+        borderWidth: 1,
+        borderBottomRightRadius: 15,
+        borderTopRightRadius: 15,
+         //backgroundColor:'rgba(0, 0, 0, 0.26)',
+        paddingLeft: 10,   
+        paddingTop:10,
+        color:'#ffffff',
+        
+        //elevation:5,
+         
+         borderColor: '#FFFFFF',
+
+    },
+
+    settingsBody:{    
+        fontSize: 18,
+        textAlign: 'left', 
+        width:350,
+        color:'#949494',   
+        paddingBottom:15,
+        
+        
+        // borderWidth: 1,  
+        // borderColor: '#00ff00', 
+    },
+    settingsSaveButton: { 
+        flex:1,   
+        width:188,
+        height:89,
+        borderRadius:15,
+
+        // borderWidth: 1,  
+        // borderColor: '#00ff00', 
     },
     
     heading:{   
         fontSize: 26,
         textAlign: 'left',    
         paddingLeft:10,
+
+        
         // borderWidth: 1,  
         // borderColor: '#00ff00',
     },   
-    time:{   
+    headingFixedWidth:{   
         fontSize: 26,
+        textAlign: 'left',    
+        paddingLeft:10,
+ 
+        // borderWidth: 1,  
+        // borderColor: '#00ff00',
+    },
+    headingWithOffset:{   
+        fontSize: 26,
+        textAlign: 'left',  
+ 
+        // borderWidth: 1,  
+        // borderColor: '#00ff00',
+    },
+    time:{   
+        fontSize: 26, 
         textAlign: 'left',  
         // borderWidth: 1,  
         // borderColor: '#00ff00',
@@ -55,7 +240,8 @@ module.exports = StyleSheet.create({
     },
     body:{    
         fontSize: 18,
-        textAlign: 'left',    
+        textAlign: 'left',  
+        
         // borderWidth: 1,  
         // borderColor: '#00ff00', 
     },
@@ -76,8 +262,7 @@ module.exports = StyleSheet.create({
 
     stopWatchIcon:{ 
         height: 61/2,
-        width: 52/2,    
-        elevation:elev,
+        width: 52/2,     
 
 
 
@@ -96,8 +281,7 @@ module.exports = StyleSheet.create({
     checkIcon:{ 
         height: 60/2,
         width: 60/2,   
-        marginBottom:1, 
-        elevation:elev,
+        marginBottom:1,  
 
         //   borderWidth: 1,  
         //   borderColor: '#00ff00',
@@ -106,22 +290,63 @@ module.exports = StyleSheet.create({
     nameIcon:{ 
         height: 49/2,
         width: 53/2,   
-        marginTop:0, 
-        elevation:elev,
+        marginTop:0,  
         //   borderWidth: 1,  
         //   borderColor: '#00ff00',
     },  
     climbButtonImage:{ 
         height: 89/2,
         width: 188/2,     
-        marginTop:0,
-        marginRight:0,
-        elevation:elev,
+        marginTop:-3,
+        marginRight:0, 
         //  borderWidth: 1, 
         //  borderColor: '#ff0000',
     },
-
-
+    saveButton:{ 
+        height: 89/2,
+        width: 188/2,     
+        marginTop:-3,
+        marginRight:0, 
+        //  borderWidth: 1, 
+        //  borderColor: '#ff0000',
+    },
+    ResetRouteButton:{ 
+        height: 89/2,
+        width: 255/2,     
+        marginTop:-3,
+        marginRight:0, 
+        //  borderWidth: 1, 
+        //  borderColor: '#ff0000',
+    },
+    ResetPasscodeButton:{ 
+        height: 89/2,
+        width: 320/2,     
+        marginTop:-5,
+        marginRight:0, 
+        //  borderWidth: 1, 
+        //  borderColor: '#ff0000',
+    },
+    SignoutButton:{ 
+        height: 89/2,
+        width: 188/2,     
+        marginTop:-3,
+        marginRight:0, 
+        //  borderWidth: 1, 
+        //  borderColor: '#ff0000',
+    },
+    settingsLogo:{ 
+        height: 188,
+        width: 250,     
+        //  borderWidth: 1,  
+        //  borderColor: '#ff0000',
+    },
+    bgcontainer: {
+        flex: 1,
+        // remove width and height to override fixed static size
+        width: 2500/1.9,
+        height: 1800/2,
+        marginTop:-80,
+      },
     //----------------------Name entry and Select from recents ----------------------------
     nameContainer:{
         flex: 1,   
@@ -219,33 +444,34 @@ module.exports = StyleSheet.create({
         // borderColor: '#ff0000',
     },
     climberHighlightsTitle:{
-        flex: 1,   
+        flex: 0.5,   
         flexDirection: 'row', 
         alignItems:'center', 
         justifyContent:'flex-start',
         paddingLeft:climberContentHorizPadding,
 
         
-        // borderWidth: 1, 
-        // borderColor: '#ff0000',
+         borderWidth: 1, 
+         borderColor: '#ff0000',
     },
     climberHighlightContent:{
-        flex: 3,   
-        flexDirection: 'row', 
-        alignItems:'center', 
-        justifyContent:'space-between',
-        paddingLeft:climberContentHorizPadding,
-        paddingRight:climberContentHorizPadding,
+        flex: 5,   
+        //flexDirection: 'row', 
+        //alignItems:'center', 
+        //justifyContent:'space-between',
+        paddingLeft:0,
+        paddingRight:0,
 
 
-        // borderWidth: 1, 
-        // borderColor: '#ff0000',
+         borderWidth: 1, 
+         borderColor: '#ff0000',
     },
     climberHighlightContainer:{
-        flex:1,
+        //flex:3,
+        width:170, 
         alignItems:'center',  
-        padding:5, 
-        paddingBottom:15,
+        padding:10, 
+        paddingBottom:20,
         height: 155,
         
 
@@ -387,7 +613,7 @@ module.exports = StyleSheet.create({
 
     emptyContainer:{
         flex: 1,  
-        backgroundColor: '#95b0ff',
+        backgroundColor: '#f0f0f0',
     }, 
    
     horizontalContainer:{ 
@@ -418,6 +644,11 @@ module.exports = StyleSheet.create({
         height: 68/2,
         width: 184/2,
     },
+    leaderboardFilterImage:{
+        resizeMode: "contain",
+        height: 66/2,
+        width: 182/2,
+    },
     InfoContainer:{
         flex: 1, 
         padding: 20, 
@@ -431,7 +662,11 @@ module.exports = StyleSheet.create({
         justifyContent:'flex-start'
     }, 
     tableContainer:{ 
-        flex: 1,   
+        flex: 0.1,  
+        
+        
+        borderWidth: 1,  
+        borderColor: '#00ff00',
 
     }, 
     leaderboardContainer:{

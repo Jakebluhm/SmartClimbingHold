@@ -26,24 +26,24 @@ export const INITIAL_STATE = new Immutable({
  
  
 const passcodeChanged = (state, action) => {
-    console.log("-------------------Inside  passcodeChanged -------------------")
+  //console.log("-------------------Inside  passcodeChanged -------------------")
  
-    console.log(action.code)
+  //console.log(action.code)
     return  state.merge({ passcode: action.code }) 
 }
 
 const tempPasscodeChanged = (state, action) => {
-    console.log("-------------------Inside  tempPasscodeChanged -------------------")
+  //console.log("-------------------Inside  tempPasscodeChanged -------------------")
 
-    console.log(action.code)
+  //console.log(action.code)
     return  state.merge({ tempPasscode: action.code }) 
 }
 
 
 const setPasscodeState = (state, action) => {
-    console.log("-------------------Inside  setPasscodeState -------------------")
+  //console.log("-------------------Inside  setPasscodeState -------------------")
 
-    console.log(action.pcState)
+  //console.log(action.pcState)
     return  state.merge({ passcodeState: action.pcState }) 
 }
 

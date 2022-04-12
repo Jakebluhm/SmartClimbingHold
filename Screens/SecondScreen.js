@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, {useRef} from 'react';
 import PropTypes from 'prop-types'
 import Actions from '../Redux/ReduxActions'
 import { connect } from 'react-redux'
@@ -12,10 +12,12 @@ import {
     Button,
     SafeAreaView,
     ScrollView,
+    Keyboard,
     StatusBar,
     StyleSheet, 
     Text,
     useColorScheme,
+    Dimensions,
     Image,
     View,
     TextInput,
@@ -27,10 +29,11 @@ import Leaderboard from '../Components/Leaderboard'
 import RecentNameContainer from '../Containers/RecentNameContainer'; 
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import SeamlessImmutable from 'seamless-immutable';
-import { debounce } from 'lodash'; 
-import PercentageCircle from 'react-native-percentage-circle';
+import { debounce } from 'lodash';  
+import { climbingGymName } from '../Sagas/firebaseSagas';
+ 
 
-
+const { width } = Dimensions.get('window') ;
 
 const s = require('../Styles/StyleSheet'); 
 export const routeID = state => state.route.routeId
@@ -62,9 +65,13 @@ export  class SecondScreen extends React.Component {
         name: PropTypes.string.isRequired, 
         climbingGymName: PropTypes.string.isRequired, 
         activeClimber: PropTypes.bool.isRequired,
-        routeId: PropTypes.string.isRequired,  
+        routeId: PropTypes.string.isRequired,   
         buttonCooldown: PropTypes.bool.isRequired, 
         allClimbData: PropTypes.object,
+        currentClimberName: PropTypes.string.isRequired, 
+        failedClimbOnClick: PropTypes.bool.isRequired, 
+        currentClimberFailures:  PropTypes.number.isRequired,
+        leaderboardWidth:   PropTypes.number.isRequired,
         //passcodeState: PropTypes.number.isRequired,
 
         updateSuccessfulClimbs: PropTypes.func.isRequired,
@@ -78,6 +85,10 @@ export  class SecondScreen extends React.Component {
         tempPasscodeChanged: PropTypes.func.isRequired, 
         setPasscodeState: PropTypes.func.isRequired,
         setIsButtonCoolingDown: PropTypes.func.isRequired,
+        setCurrentClimberName: PropTypes.func.isRequired,
+        setFailedClimbOnClick: PropTypes.func.isRequired,
+        setCurrentClimberFailuresRequest: PropTypes.func.isRequired,
+        setLeaderboardWidth: PropTypes.func.isRequired,
     }
 
     async getData(){
@@ -104,20 +115,28 @@ export  class SecondScreen extends React.Component {
         //console.log("Start Climb pressed");
         //console.log("this.props"); 
         this.props.beginClimbRequest();
-        this.props.updateFailedClimbs(this.props.failedClimbs + 1) 
+
+        if(this.props.failedClimbOnClick){
+          this.props.updateFailedClimbs(this.props.failedClimbs + 1) 
+          this.props.setCurrentClimberFailuresRequest()
+        }
+
+        this.props.setCurrentClimberName(this.props.name) 
+        Keyboard.dismiss()
         
     }
- 
+
+
  
     render()
     {
         //console.log("-----------------render()---------------------") ;
         //console.log("this.props") ;
         //console.log(this.props) ;
-        const {climbingGymName, name, climbTime, leaderboard, successfulClimbs, recentClimbers, failedClimbs, buttonCooldown, allClimbData } = this.props
+        const {leaderboardWidth, climbingGymName, name, currentClimberFailures, climbTime, leaderboard, successfulClimbs, recentClimbers, failedClimbs, buttonCooldown, allClimbData, currentClimberName } = this.props
         var climbPercentage = 0.0
-        console.log('buttonCooldown')
-        console.log(buttonCooldown)
+      //console.log('buttonCooldown')
+      //console.log(buttonCooldown)
         if(successfulClimbs + failedClimbs > 0)
         {
           climbPercentage =  successfulClimbs / (successfulClimbs + failedClimbs) * 100.0
@@ -126,52 +145,138 @@ export  class SecondScreen extends React.Component {
           climbPercentage = 0.0
         } 
  
-
-        // Calculate Current Climbers Top 3 Climbs
-        //Throw all climbs into array with name, climbTime, dateTime
-        var climberDateTimes = []
+        // Calculate Average Climb Time
         try{
-          for(const climbTime in allClimbData[name] ){   
-            climberDateTimes.push({climbTime:allClimbData[name][climbTime]}) 
-          } 
-          //console.log(climberDateTimes)
-          var top3ClimbsForCurrentClimber = climberDateTimes.slice(0, 3);
-          console.log('length')
-          console.log(top3ClimbsForCurrentClimber.length)
-          const length = top3ClimbsForCurrentClimber.length
+        var showAvg = false
+        var timeSum = 0
+        var count = 0
+        var averageClimbTime = 0
+      //console.log('-----ALL CLIMBERS TIMES-----')
+      //console.log(allClimbData)
+        for(const climber in allClimbData){
+        //console.log(climber)
+          for(const time in allClimbData[climber]){
+          //console.log(allClimbData[climber][time])
+            timeSum += allClimbData[climber][time]
+            count++
+          }
+        } 
+      //console.log('timeSum')
+      //console.log(timeSum)
+      //console.log('count')
+      //console.log(count)
+        averageClimbTime = timeSum/count
+        
+      //console.log('averageClimbTime')
+      //console.log(averageClimbTime)
 
-          var top1 = (length >= 1)?  convertToMMSS(top3ClimbsForCurrentClimber[0]['climbTime']) : 'Empty'
-          var top2 = (length >= 2)?  convertToMMSS(top3ClimbsForCurrentClimber[1]['climbTime']) : 'Empty'
-          var top3 = (length >= 3)?  convertToMMSS(top3ClimbsForCurrentClimber[2]['climbTime']) : 'Empty' 
-          console.log('--------------------------top3ClimbsForCurrentClimber=====================')
-          console.log('length')
-          console.log(top3ClimbsForCurrentClimber.length)
+        showAvg = true
+      }
+      catch(err){
+      //console.log('-----ERROR CALUCULATING AVERAGE CLIMBER TIME-----')
+      //console.log(err)
+        
+      }
+
+
+
+
+        // Calculate Current Climbers Top 3 Climbs, Most recent climb
+        //Throw all climbs into array with name, climbTime, dateTime
+        var top1 = null
+        var top2 = null
+        var top3 = null
+        var length = 0
+        var climberDateTimes = []
+        var latestUnixTime = 0
+        var mostRecentClimbTime = 0
+        var percentageComparedToAverage = 0
+ 
+      //console.log('currentClimberName')
+      //console.log(currentClimberName)
+        try{
+          for(const climbTime in allClimbData[currentClimberName] ){   
+            climberDateTimes.push({time:allClimbData[currentClimberName][climbTime]}) 
+            
+          //console.log('climbTime')
+          //console.log(climbTime)
+            if(climbTime > latestUnixTime)
+            { 
+              latestUnixTime = climbTime
+              mostRecentClimbTime = allClimbData[currentClimberName][climbTime]
+            }
+          } 
+
+          // Get Climbers most recent climb
+ 
+        //console.log('latestUnixTime')
+        //console.log(latestUnixTime) 
+        //console.log('mostRecentClimbTime')
+        //console.log(mostRecentClimbTime) 
+
+        //console.log('climberDateTimes')
+        //console.log(climberDateTimes)
+          climberDateTimes = climberDateTimes.sort(compare)
+          var top3ClimbsForCurrentClimber = climberDateTimes.slice(0, 3);
+        //console.log('length')
+        //console.log(top3ClimbsForCurrentClimber.length)
+          length = top3ClimbsForCurrentClimber.length
+
+          top1 = (length >= 1)?  convertToMMSS(top3ClimbsForCurrentClimber[0]['time']) : 'Empty'
+          top2 = (length >= 2)?  convertToMMSS(top3ClimbsForCurrentClimber[1]['time']) : 'Empty'
+          top3 = (length >= 3)?  convertToMMSS(top3ClimbsForCurrentClimber[2]['time']) : 'Empty' 
+        //console.log('--------------------------top3ClimbsForCurrentClimber=====================')
+        //console.log('length')
+        //console.log(top3ClimbsForCurrentClimber.length)
 
         }
         catch(err){
           // Add art here as place holder until a climb is completed
-          console.log('-----error occured: ')
-          console.log(err)
-        }
+        //console.log('--------------2-error occured: ')
+        //console.log(err) 
+
+          top1 = 'Empty'
+          top2 = 'Empty'
+          top3 = 'Empty'
+        } 
+ 
+
+      //console.log('climbPercentage')
+
+      //console.log(climbPercentage) 
+
+ 
 
 
-
-
-
-
-
-
+        var layout = {} 
 
         
         return (  
           <View style={s.container}>
-            <View style={s.verticalHalfLeft}>
+            <View  style={s.verticalHalfLeft} onLayout={(event) => {
+               layout = event.nativeEvent.layout;
+               console.log("layout.x")
+               console.log("layout.y")
+               console.log("layout.width")
+               console.log("layout.height")
+               console.log(layout.x)
+               console.log(layout.y)
+               console.log(layout.width)
+               console.log(layout.height)
+               this.props.setLeaderboardWidth(layout.width)
+              }} >
               
-            <View style={s.tableContainer}>  
-              <Leaderboard leaderboardData={leaderboard}/> 
-            </View>
-              
-            </View>
+              <ScrollView horizontal={true}
+                          decelerationRate={0}
+                          snapToInterval={leaderboardWidth}
+                          snapToAlignment={"center"}> 
+                  <Leaderboard leaderboardData={leaderboard} width={layout.width} height={layout.height}/>  
+                  <Leaderboard leaderboardData={leaderboard} width={layout.width} height={layout.height}/>  
+                
+              </ScrollView>
+
+
+            </View> 
  
             <View style={s.verticalHalfRight}>
               <View style={s.nameContainer}> 
@@ -196,7 +301,7 @@ export  class SecondScreen extends React.Component {
                         this.props.onNameChange(cleanText)  
                         }}
                       value={name} 
-                      placeholder="Enter Name"
+                      placeholder="Enter Name" 
                       keyboardType="default"
                       >
                     </TextInput> 
@@ -232,86 +337,123 @@ export  class SecondScreen extends React.Component {
                           <View style={s.iconContainer}>
                             <Image style={s.stopWatchIcon} source={require('../Assets/StopWatchIcon.png')} />
                           </View>
-                          <Text style={s.heading}>
-                              {name}'s top climbs
+                          <Text style={s.headingFixedWidth}   >
+                          {currentClimberName.length < 29
+                            ? `${currentClimberName}`
+                            : `${currentClimberName.substring(0, 26)}...`} 
+                          </Text>  
+                          <Text style={s.headingWithOffset}>
+                               's top climbs 
                           </Text> 
                         </View>
 
+                        <View style={{flex:1, paddingRight: 10, paddingLeft:10}}>
+                        <ScrollView horizontal={true} style={s.climberHighlightContent}> 
 
-                        <View style={s.climberHighlightContent}> 
-
-                          <View style={s.climberHighlightContainer}>
-                          <LinearGradient colors={['#ffffff', '#c4c4c4']} style={s.recentNameContainer}>
-                            <View style={s.climberHighlight}>
-                              <View style={s.medal}> 
-                                <View style={s.metalContainer}> 
-                                  <Image style={s.metalIcon} source={require('../Assets/GoldMetalIcon.png')} />
-                                </View>
+                          <View style={[s.climberHighlightContainer, { borderColor: '#ffff00', borderWidth: 3, }]}>
+                            <LinearGradient colors={['#ffffff', '#c4c4c4']} style={s.recentNameContainer}>
+                              <View style={s.climberHighlight}>
+                                <View style={s.medal}> 
+                                  <View style={s.metalContainer}> 
+                                    <Image style={s.metalIcon} source={require('../Assets/GoldMetalIcon.png')} />
+                                  </View>
+                                </View> 
+                                <View style={s.timeContent}>
+                                <Text style={s.time}>
+                                  {top1}
+                                </Text> 
+                                </View> 
                               </View> 
-                              <View style={s.timeContent}>
-                              <Text style={s.time}>
-                                {top1}
-                              </Text> 
-                              </View> 
-                            </View> 
                             </LinearGradient> 
                           </View> 
 
 
-                          <View style={s.climberHighlightContainer}>
-                          <LinearGradient colors={['#ffffff', '#c4c4c4']} style={s.recentNameContainer}>
-                            <View style={s.climberHighlight}>
-                              <View style={s.medal}>
-                                <View style={s.metalContainer}> 
-                                  <Image style={s.metalIcon} source={require('../Assets/SilverMetalIcon.png')} />
-                                </View> 
-                              </View>  
-                              <View style={s.timeContent}>
-                                <Text style={s.time}>
-                                  {top2}
-                                </Text>  
-                              </View>  
-                            </View> 
+                          <View style={[s.climberHighlightContainer, { borderColor: '#ffff00', borderWidth: 3, }]}>
+                            <LinearGradient colors={['#ffffff', '#c4c4c4']} style={s.recentNameContainer}>
+                              <View style={s.climberHighlight}>
+                                <View style={s.medal}>
+                                  <View style={s.metalContainer}> 
+                                    <Image style={s.metalIcon} source={require('../Assets/SilverMetalIcon.png')} />
+                                  </View> 
+                                </View>  
+                                <View style={s.timeContent}>
+                                  <Text style={s.time}>
+                                    {top2} 
+                                  </Text>  
+                                </View>  
+                              </View> 
                             </LinearGradient> 
                           </View>
 
 
-                          <View style={s.climberHighlightContainer}>
-                          <LinearGradient colors={['#ffffff', '#c4c4c4']} style={s.recentNameContainer}>
-                            <View style={s.climberHighlight}>
-                              <View style={s.medal}>
-                                <View style={s.metalContainer}> 
-                                  <Image style={s.metalIcon} source={require('../Assets/BronzeMetalIcon.png')} /> 
+                          <View style={[s.climberHighlightContainer, { borderColor: '#ffff00', borderWidth: 3, }]}>
+                            <LinearGradient colors={['#ffffff', '#c4c4c4']} style={s.recentNameContainer}>
+                              <View style={s.climberHighlight}>
+                                <View style={s.medal}>
+                                  <View style={s.metalContainer}> 
+                                    <Image style={s.metalIcon} source={require('../Assets/BronzeMetalIcon.png')} /> 
+                                  </View> 
                                 </View> 
-                              </View> 
-                              <View style={s.timeContent}>
-                                <Text style={s.time}>
-                                  {top3}
-                                </Text>  
+                                <View style={s.timeContent}>
+                                  <Text style={s.time}>
+                                    {top3}
+                                  </Text>  
+
+                                </View> 
 
                               </View> 
-
-                            </View> 
                             </LinearGradient> 
                           </View> 
 
+ 
+                          { showAvg?
+                          <View style={[s.climberHighlightContainer, {paddingRight:10, borderColor: '#ffff00', borderWidth: 3, }]}>
+                            <LinearGradient colors={['#ffffff', '#c4c4c4']} style={s.recentNameContainer}>
+                              <View style={[s.climberHighlight, {borderColor: '#00ff00', borderWidth: 2,}]}> 
+                                <View style={[s.medal, {borderColor: '#00ff00', borderWidth: 2,}]}> 
+                                  <View style={s.metalContainer}>  
+                                  </View> 
+                                </View> 
+                                <View style={[s.timeContent, {borderColor: '#ffff00', borderWidth: 2,}]}> 
+                                  <Text style={s.time}>
+                                    {convertToMMSS(mostRecentClimbTime)} 
+                                  </Text>  
+                                  <Text style={{fontSize: 20, textAlign: 'left', alignSelf:'flex-start'}}>
+                                  {(averageClimbTime - mostRecentClimbTime) > 0? String( Math.round(averageClimbTime - mostRecentClimbTime)) : String( Math.round(Math.abs(averageClimbTime - mostRecentClimbTime))) }  
+                                  </Text>  
+                                    
+                                  <Text style={{fontSize:16, alignSelf:'flex-start'}}>
+                                  {(averageClimbTime - mostRecentClimbTime) > 0? "Seconds faster than avg" :  "Seconds slower than avg"}  
+                                  </Text> 
+                                </View> 
 
+                              </View> 
+                            </LinearGradient> 
+                          </View> 
+                          : null}
+
+                          { showAvg?
+                          <View style={[s.climberHighlightContainer, {paddingRight:10, borderColor: '#ffff00', borderWidth: 3, }]}>
+                            <LinearGradient colors={['#ffffff', '#c4c4c4']} style={s.recentNameContainer}>
+                              <View style={[s.climberHighlight, {borderColor: '#00ff00', borderWidth: 2,}]}> 
+                                <View style={[s.medal, {borderColor: '#00ff00', borderWidth: 2,}]}> 
+                                  <View style={s.metalContainer}>  
+                                  </View> 
+                                </View> 
+                                <View style={[s.timeContent, {borderColor: '#ffff00', borderWidth: 2,}]}> 
+                                  <Text style={s.time}>
+                                    {length}/{length + currentClimberFailures} 
+                                  </Text>  
+                                </View> 
+
+                              </View> 
+                            </LinearGradient> 
+                          </View> 
+                          : null}
+
+                        </ScrollView>
                         </View>
-
-
-
-                {/* <Text style={s.heading1}>
-                          {name}'s Top Climbs
-                </Text> 
-                <Text style={s.heading1}>
-                  {top1}
-                </Text> 
-                <Text style={s.heading1}>
-                  {top2}
-                </Text> 
-                <Text style={s.heading1}>
-                  {top3}
-                </Text>  */}
+ 
               
                 </View>
             
@@ -352,11 +494,11 @@ export  class SecondScreen extends React.Component {
                       </View>
                       <Text style={s.heading1}>
                           SUCCESS RATE
-                      </Text>  
+                      </Text>   
                   
-                    </View> 
+                    </View>  
                     <View style={s.routeStatContent1}>
-                      <PercentageCircle radius={65} percent={climbPercentage.toFixed(0)} color={'#008047'} borderWidth={6} bgcolor={'#000000'} innerColor={'#ffffff'} textStyle={s.successfulClimbsFont} ></PercentageCircle>  
+                      {/* <PercentageCircle radius={65} percent={Number(climbPercentage.toFixed(1))} color={'#008047'} borderWidth={6} bgcolor={'#000000'} innerColor={'#ffffff'} textStyle={s.successfulClimbsFont} ></PercentageCircle>   */}
                   
                     </View> 
                   </View>
@@ -364,55 +506,7 @@ export  class SecondScreen extends React.Component {
               </View> 
             </View>
           
-
-
-            {/* <View style={s.containerTop}>
-              <View style={s.horizontalContainer}> 
-                 
-                
-                <View style={s.verticalContainer}> 
-                  
-                  <Text style={s.welcome}>
-                      <Icon name="person" style={{flex:1, paddingBottom:1}} size={25} color="#000" />Climber Name
-                  </Text> 
-                  <TextInput
-                    style={s.nameInput} 
-                    onChangeText={text => {   
-                      var cleanText = text.replace(/[.$#\[\]\/]/gi, '')
-                      this.props.onNameChange(cleanText) 
-                      }}
-                    value={name} 
-                    placeholder="Enter Name"
-                    keyboardType="default"
-                  /> 
-                </View>   
-                <RecentNameContainer names={recentClimbers}></RecentNameContainer> 
-              </View> 
-            </View> 
-            <View style={s.containerMiddle}>
  
-              <View style={s.horizontalContainer}>
-                <View style={s.tableContainer}> 
-
-                  <Leaderboard leaderboardData={leaderboard}/> 
-                </View>
-                <View style={s.tableContainer}>
-                  <View style={s.InfoContainer} > 
-                    <Text style={s.infoGraphic}  > 
-                    Successful Climbs:      {successfulClimbs}   
-                    </Text>
-                    <Text  style={s.infoGraphic} >  
-                    Success Rate:      {climbPercentage.toFixed(1)}%  
-                    </Text> 
-                  </View>
-                </View>
-              </View>
-            </View>
-
-            <View style={s.containerEnd}>
-              <Button style={s.button} disabled={!(name.length > 0) || buttonCooldown} color="#F98455" title="Start Climb" onPress={this.onButtonPress} /> 
-            </View> */}
-            
           </View>
 
             
@@ -429,20 +523,20 @@ export  class SecondScreen extends React.Component {
 
     componentWillUnmount() {
         // detach all listeners to this reference when component unmounts (very important!)
-        console.log('component will unmount')
+      //console.log('component will unmount')
         this.firebaseRefClimberData.off();
         try{
           this._unsubscribe();
       }
       catch(err){
-          console.log(err) 
+        //console.log(err) 
       }
       }
 
       async componentDidMount(){  
         try{
           this._unsubscribe = this.props.navigation.addListener('focus', () => {
-              console.log('Home Screen did foucs')
+            //console.log('Home Screen did foucs')
               if(this.props.passcodeState == PasscodeCreationStates.UNLOCKED){
                 this.props.tempPasscodeChanged(''); 
                 this.props.setPasscodeState(PasscodeCreationStates.SAVED)  
@@ -450,12 +544,12 @@ export  class SecondScreen extends React.Component {
             });
           }
           catch(err){
-              console.log(err)
+            //console.log(err)
           }
       // this._unsubscribe = this.props.navigation.addListener('focus', () => {
-      //   console.log('Home Screen did foucs')
+      // //console.log('Home Screen did foucs')
       // });
-        console.log('compenentDidMount in SecondScreen..js   ')
+      //console.log('compenentDidMount in SecondScreen..js   ')
         
         await this.getData();
 
@@ -477,7 +571,7 @@ export  class SecondScreen extends React.Component {
         this.firebaseRefSuccessfulClimbs.on("value", this.onFirebaseSuccessfulClimbsChanged);
 
       //console.log("-----componentDidMount------");
-      this.props.firebaseDataRequest();
+      this.props.firebaseDataRequest();       //TODO: Add state variable for firebase loading and make it true untill this returns and is not null
     }
 
 
@@ -501,10 +595,10 @@ export  class SecondScreen extends React.Component {
 
         var allClimbs = []
 
-        console.log("-----onFrebaseClimberDataChanged------");
-        console.log(snapshot)
+      //console.log("-----onFrebaseClimberDataChanged------");
+      //console.log(snapshot)
         snapshot.forEach(childSnapshot => {
-                console.log(childSnapshot.key) 
+              //console.log(childSnapshot.key) 
                 
                 let climbs = childSnapshot.val() 
  
@@ -513,17 +607,41 @@ export  class SecondScreen extends React.Component {
                     allClimbs.push({name:childSnapshot.key, time:climbData})
                 })
         })
-        console.log("-----allClimbs------");
-        console.log(allClimbs);
+      //console.log("-----allClimbs------");
+      //console.log(allClimbs);
         const sorted = allClimbs.sort(compare)
-        console.log("-----sorted------");
-        console.log(sorted);
+      //console.log("-----sorted------");
+      //console.log(sorted);
         const top5Climbers = sorted.slice(0,20) 
         //console.log("-----top5Climbers------");
         //console.log(top5Climbers);
         this.props.updateLeaderBoard(top5Climbers) 
-        this.props.changeAllClimbData(snapshot.val()) 
+
+        // Filter out failures
+      //console.log('Filter out failures')
         
+        let tempAllClimbData = snapshot.val()
+
+      //console.log(tempAllClimbData) 
+        for(const climber in tempAllClimbData){
+        //console.log('climber data before')
+        //console.log(tempAllClimbData[climber])
+
+
+          delete tempAllClimbData[climber].Failures
+
+
+        console.log('climber data after')
+        console.log(tempAllClimbData[climber])
+
+
+        } 
+      //console.log('tempAllClimbData filtered out failures')
+      //console.log(tempAllClimbData)
+
+      console.log('NEXT CLICK DO NOT INCREMENT FAILURES')
+        this.props.changeAllClimbData(tempAllClimbData) 
+        //this.props.setFailedClimbOnClick(false)
       };
 
 
@@ -559,6 +677,10 @@ function compare( a, b ) {
         passcodeState: state.climbingGym.passcodeState,
         buttonCooldown: state.route.buttonCooldown,
         allClimbData: state.route.allClimbData, 
+        currentClimberName: state.route.currentClimberName, 
+        failedClimbOnClick: state.route.failedClimbOnClick,
+        currentClimberFailures: state.route.currentClimberFailures,
+        leaderboardWidth: state.route.leaderboardWidth,
     };
   }
   
@@ -574,6 +696,10 @@ function compare( a, b ) {
     changeAllClimbData: Actions.changeAllClimbData,
     setPasscodeState: ClimbingGymActions.setPasscodeState,
     setIsButtonCoolingDown: Actions.setIsButtonCoolingDown,
+    setCurrentClimberName: Actions.setCurrentClimberName,
+    setFailedClimbOnClick: Actions.setFailedClimbOnClick,
+    setCurrentClimberFailuresRequest: Actions.setCurrentClimberFailuresRequest,
+    setLeaderboardWidth: Actions.setLeaderboardWidth,
   }
   
   export default connect(mapStateToProps, mapDispatchToProps)(SecondScreen)

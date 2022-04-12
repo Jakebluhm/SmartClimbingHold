@@ -13,7 +13,7 @@ import {
     TextInput, 
   } from 'react-native';
 
-  const s = require('../Styles/StyleSheet');
+  const s = require('./Styles/StyleSheet');
 
 
   

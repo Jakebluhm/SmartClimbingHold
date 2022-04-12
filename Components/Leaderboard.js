@@ -16,6 +16,7 @@ import PropTypes from 'prop-types'
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { forEach } from 'lodash';
 
+import LinearGradient from 'react-native-linear-gradient';
 const s = require('../Styles/StyleSheet'); 
 
 
@@ -27,6 +28,11 @@ export  class Leaderboard extends React.Component {
         leaderboardFilter: PropTypes.number.isRequired,
         allClimbData: PropTypes.object,
         changeLeaderboardFilter: PropTypes.func.isRequired,
+        leaderboardWidth: PropTypes.number,
+
+        width: PropTypes.number,
+        height: PropTypes.number,
+
     }
 
     leaderboardYearButton(){
@@ -55,9 +61,13 @@ export  class Leaderboard extends React.Component {
     }
 
     render() {
-        console.log('-------------------------Leaderboard.js render()----------------------------------')
+      //console.log('-------------------------Leaderboard.js render()----------------------------------')
         const data = this.props.leaderboardData 
-        const {allClimbData, leaderboardFilter} = this.props
+        const {leaderboardWidth, allClimbData, leaderboardFilter} = this.props
+
+        console.log('-----------leaderboardWidth')
+        console.log(leaderboardWidth)
+
         const numEntries = (data.length < 20)? data.length : 20
   
         // console.log('allClimbData')
@@ -198,12 +208,12 @@ export  class Leaderboard extends React.Component {
 
         if(climbData.length > 0){
             var leaderboardPosition = 0
-            console.log('climbData')
-            console.log(climbData)
+          //console.log('climbData')
+          //console.log(climbData)
             for (const climb in climbData) {
                 var time = convertToMMSS(climbData[climb].time); 
-                console.log('climbData[climb]')
-                console.log(climbData[climb])
+              //console.log('climbData[climb]')
+              //console.log(climbData[climb])
 
 
                 if(leaderboardPosition ===0 && climbData.length  === 1){
@@ -280,11 +290,15 @@ export  class Leaderboard extends React.Component {
         // }
         // else{
         //     leaderBoardEntries.push(<Text key={0} style={styles.welcome}>Complete a climb to show leaderboard</Text>)
-        // }
-  
+        // } 
         return (
             
-            <View style={[s.containerLB]}>
+            <View style={{              width:leaderboardWidth,
+                                     paddingHorizontal:25,
+                                    flex: 1,      
+                                    flexDirection: "column", 
+                                    paddingRight:0,  
+                                    alignItems:'center'}}>
                 <View style={{flex:1, alignItems:'center'  }}>
                     
                         {LeaderboardFilterButtons} 
@@ -312,9 +326,10 @@ export  class Leaderboard extends React.Component {
                         </DataTable.Title>
                     </DataTable.Header>
             
-                    <ScrollView> 
+                    <ScrollView fadingEdgeLength={50}> 
                         {leaderBoardEntries}  
                     </ScrollView>
+ 
             
     
                 </DataTable>
@@ -323,6 +338,20 @@ export  class Leaderboard extends React.Component {
             
         );
     } 
+}
+
+function autoSizingView(){
+
+
+
+
+    return(
+
+        <View >
+        
+        </View>
+
+    )
 }
   
 function compare( a, b ) {
@@ -344,6 +373,7 @@ function mapStateToProps(state) {
     return {
         allClimbData: state.route.allClimbData, 
         leaderboardFilter: state.route.leaderboardFilter,
+        leaderboardWidth: state.route.leaderboardWidth,
     };
   }
   

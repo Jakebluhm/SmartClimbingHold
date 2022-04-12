@@ -31,7 +31,7 @@ export  class NameButton extends React.Component {
         this.onPress = this.onPress.bind(this)
     }
     onPress(name){
-        console.log('----------------------------onPress--------------------')
+      //console.log('----------------------------onPress--------------------')
          this.props.onNameChange(name)
     }
     render() { 

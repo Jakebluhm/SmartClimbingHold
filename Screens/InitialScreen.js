@@ -41,7 +41,7 @@ export  class InitialScreen extends React.Component
         onRouteIdChange: PropTypes.func.isRequired,
         userAuthenticated: PropTypes.bool.isRequired,
         routeIdSaved:  PropTypes.func.isRequired,
-    }
+    } 
 
     async getData(){
         //console.log('-----------------------------getData() in InitialScreen-------------')
@@ -84,12 +84,12 @@ export  class InitialScreen extends React.Component
     { 
         //console.log('----------------------- initialScreenjs render()------------------------')
         const { isLoading, routeId, routeIdSet, authenticationIsLoading, userAuthenticated, climbingGymName} = this.props
-        //console.log('---routeId.length')
-        //console.log(routeId.length)
+      //console.log('---routeId.length')
+      //console.log(routeId.length)
         //console.log('---isLoading')
         //console.log(isLoading)
-        //console.log('---routeIdSet')
-        //console.log(routeIdSet)
+      //console.log('---routeIdSet')
+      //console.log(routeIdSet)
         //console.log('---userAuthenticated')
         //console.log(userAuthenticated)
 
@@ -120,8 +120,8 @@ export  class InitialScreen extends React.Component
                                         //   const currentRouteName = navigationRef.getCurrentRoute().name;
                                   
                                         //   if (previousRouteName !== currentRouteName) {
-                                        //     console.log('currentRouteName')
-                                        //     console.log(currentRouteName)
+                                        //   //console.log('currentRouteName')
+                                        //   //console.log(currentRouteName)
                                         //   }
                                   
                                         //   // Save the current route name for later comparison
