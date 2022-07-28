@@ -146,7 +146,7 @@ export  class GymSettingsScreen extends React.Component
         return ( 
             <View style={s.container}>
             { (passcodeState != PasscodeCreationStates.UNLOCKED)?
-                <View style={[s.verticalContainer, {alignItems:'center', justifyContent:'center', borderWidth:  3, borderLeftColor:  'red'}]}>
+                <View style={[s.verticalContainer, {alignItems:'center', justifyContent:'center', }]}>
                     <CreatePasscodeScreenContainer></CreatePasscodeScreenContainer>  
                 </View>
                   :

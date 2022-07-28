@@ -451,8 +451,8 @@ module.exports = StyleSheet.create({
         paddingLeft:climberContentHorizPadding,
 
         
-         borderWidth: 1, 
-         borderColor: '#ff0000',
+        //  borderWidth: 1, 
+        //  borderColor: '#ff0000',
     },
     climberHighlightContent:{
         flex: 5,   
@@ -463,8 +463,8 @@ module.exports = StyleSheet.create({
         paddingRight:0,
 
 
-         borderWidth: 1, 
-         borderColor: '#ff0000',
+        //  borderWidth: 1, 
+        //  borderColor: '#ff0000',
     },
     climberHighlightContainer:{
         //flex:3,

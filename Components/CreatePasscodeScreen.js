@@ -279,7 +279,7 @@ export  class CreatePasscodeScreen extends React.Component
 
         return ( 
 
-            <View style={ { paddingTop:0 , borderWidth:  8, borderLeftColor:  'red'}}> 
+            <View style={ { paddingTop:0 , 1234}}> 
                 {passcodeView}
             </View> 
         );

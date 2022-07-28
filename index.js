@@ -21,7 +21,7 @@ const store = createStore()
 //   </Provider>,
 //   rootElement
 // );
-
+console.disableYellowBox = true;
 
 const RNRedux = () => (
     <Provider store = { store }>

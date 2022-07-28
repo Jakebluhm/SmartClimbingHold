@@ -30,7 +30,7 @@ import RecentNameContainer from '../Containers/RecentNameContainer';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import SeamlessImmutable from 'seamless-immutable';
 import { debounce } from 'lodash';  
-import { climbingGymName } from '../Sagas/firebaseSagas';
+import { climbingGymName } from '../Sagas/firebaseSagas'; 
  
 
 const { width } = Dimensions.get('window') ;
@@ -350,7 +350,7 @@ export  class SecondScreen extends React.Component {
                         <View style={{flex:1, paddingRight: 10, paddingLeft:10}}>
                         <ScrollView horizontal={true} style={s.climberHighlightContent}> 
 
-                          <View style={[s.climberHighlightContainer, { borderColor: '#ffff00', borderWidth: 3, }]}>
+                          <View style={[s.climberHighlightContainer, {  }]}>
                             <LinearGradient colors={['#ffffff', '#c4c4c4']} style={s.recentNameContainer}>
                               <View style={s.climberHighlight}>
                                 <View style={s.medal}> 
@@ -368,7 +368,7 @@ export  class SecondScreen extends React.Component {
                           </View> 
 
 
-                          <View style={[s.climberHighlightContainer, { borderColor: '#ffff00', borderWidth: 3, }]}>
+                          <View style={[s.climberHighlightContainer, {  }]}>
                             <LinearGradient colors={['#ffffff', '#c4c4c4']} style={s.recentNameContainer}>
                               <View style={s.climberHighlight}>
                                 <View style={s.medal}>
@@ -386,7 +386,7 @@ export  class SecondScreen extends React.Component {
                           </View>
 
 
-                          <View style={[s.climberHighlightContainer, { borderColor: '#ffff00', borderWidth: 3, }]}>
+                          <View style={[s.climberHighlightContainer, {   }]}>
                             <LinearGradient colors={['#ffffff', '#c4c4c4']} style={s.recentNameContainer}>
                               <View style={s.climberHighlight}>
                                 <View style={s.medal}>
@@ -407,14 +407,14 @@ export  class SecondScreen extends React.Component {
 
  
                           { showAvg?
-                          <View style={[s.climberHighlightContainer, {paddingRight:10, borderColor: '#ffff00', borderWidth: 3, }]}>
+                          <View style={[s.climberHighlightContainer, {paddingRight:10,   }]}>
                             <LinearGradient colors={['#ffffff', '#c4c4c4']} style={s.recentNameContainer}>
-                              <View style={[s.climberHighlight, {borderColor: '#00ff00', borderWidth: 2,}]}> 
-                                <View style={[s.medal, {borderColor: '#00ff00', borderWidth: 2,}]}> 
+                              <View style={[s.climberHighlight, {}]}> 
+                                <View style={[s.medal, {}]}> 
                                   <View style={s.metalContainer}>  
                                   </View> 
                                 </View> 
-                                <View style={[s.timeContent, {borderColor: '#ffff00', borderWidth: 2,}]}> 
+                                <View style={[s.timeContent, {}]}> 
                                   <Text style={s.time}>
                                     {convertToMMSS(mostRecentClimbTime)} 
                                   </Text>  
@@ -433,14 +433,14 @@ export  class SecondScreen extends React.Component {
                           : null}
 
                           { showAvg?
-                          <View style={[s.climberHighlightContainer, {paddingRight:10, borderColor: '#ffff00', borderWidth: 3, }]}>
+                          <View style={[s.climberHighlightContainer, {paddingRight:10,   }]}>
                             <LinearGradient colors={['#ffffff', '#c4c4c4']} style={s.recentNameContainer}>
-                              <View style={[s.climberHighlight, {borderColor: '#00ff00', borderWidth: 2,}]}> 
-                                <View style={[s.medal, {borderColor: '#00ff00', borderWidth: 2,}]}> 
+                              <View style={[s.climberHighlight, {}]}> 
+                                <View style={[s.medal, {}]}> 
                                   <View style={s.metalContainer}>  
                                   </View> 
                                 </View> 
-                                <View style={[s.timeContent, {borderColor: '#ffff00', borderWidth: 2,}]}> 
+                                <View style={[s.timeContent, {}]}> 
                                   <Text style={s.time}>
                                     {length}/{length + currentClimberFailures} 
                                   </Text>  
@@ -498,8 +498,11 @@ export  class SecondScreen extends React.Component {
                   
                     </View>  
                     <View style={s.routeStatContent1}>
-                      {/* <PercentageCircle radius={65} percent={Number(climbPercentage.toFixed(1))} color={'#008047'} borderWidth={6} bgcolor={'#000000'} innerColor={'#ffffff'} textStyle={s.successfulClimbsFont} ></PercentageCircle>   */}
-                  
+                       {/* <PercentageCircle radius={65} percent={Number(climbPercentage.toFixed(1))} color={'#008047'} borderWidth={6} bgcolor={'#000000'} innerColor={'#ffffff'} textStyle={s.successfulClimbsFont} ></PercentageCircle>   */}
+                            
+                      <Text style={s.successfulClimbsFont}>
+                            {climbPercentage.toFixed(1)}%
+                            </Text>
                     </View> 
                   </View>
                 </View>
